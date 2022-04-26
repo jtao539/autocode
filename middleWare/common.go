@@ -2,7 +2,7 @@ package middleWare
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/jtao539/autocode/model/response"
+	"github.com/jtao539/autocode/common/response"
 	"strconv"
 )
 
