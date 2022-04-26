@@ -26,3 +26,12 @@ func JSONDecode(r io.Reader, obj interface{}) error {
 	}
 	return nil
 }
+
+func CheckStringNULL(args ...string) bool {
+	for i := 0; i < len(args); i++ {
+		if args[i] == "" {
+			return true
+		}
+	}
+	return false
+}

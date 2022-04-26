@@ -199,17 +199,24 @@ func (a *Atom) Clear() {
 	}
 }
 
-func (a *Atom) Mkdir() {
-	pathArray := []string{"model", "db", "service", "api", "router"}
+func (a *Atom) MkSomeDir() {
+	pathArray := []string{"model", "db", "service", "api", "router", "common"}
 	for i := 0; i < len(pathArray); i++ {
-		filePath := a.Path + "/" + pathArray[i] + "/"
-		if flag, _ := PathExists(filePath); !flag {
-			err := os.Mkdir(filePath, 777)
-			if err != nil {
-				fmt.Println(err)
-				return
-			}
-			fmt.Println(filePath, "文件夹创建成功")
+		MkDir(a.Path, pathArray[i])
+	}
+	innerArray := []string{"definiteError", "request", "response", "middleWare"}
+	for i := 0; i < len(innerArray); i++ {
+		MkDir(a.Path+"/common", innerArray[i])
+	}
+}
+
+func MkDir(path, fileName string) {
+	filePath := path + "/" + fileName + "/"
+	if flag, _ := PathExists(filePath); !flag {
+		err := os.Mkdir(filePath, 777)
+		if err != nil {
+			fmt.Println(err)
+			return
 		}
 	}
 }
@@ -230,7 +237,11 @@ func PathExists(path string) (bool, error) {
 
 func (a *Atom) GeneralAutoCode() {
 	a.Clear()
-	a.Mkdir()
+	a.MkSomeDir()
+	a.CreateError()
+	a.CreateResponse()
+	a.CreateRResponse()
+	a.CreateRequest()
 	a.CreateModel()
 	a.createDB()
 	a.createService()
