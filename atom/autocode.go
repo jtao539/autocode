@@ -204,7 +204,7 @@ func (a *Atom) MkSomeDir() {
 	for i := 0; i < len(pathArray); i++ {
 		MkDir(a.Path, pathArray[i])
 	}
-	innerArray := []string{"definiteError", "request", "response", "middleWare"}
+	innerArray := []string{"definiteError", "request", "response"}
 	for i := 0; i < len(innerArray); i++ {
 		MkDir(a.Path+"/common", innerArray[i])
 	}
