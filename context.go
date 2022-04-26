@@ -4,6 +4,7 @@ import (
 	"github.com/jtao539/autocode/atom"
 	"github.com/jtao539/autocode/util"
 	"github.com/jtao539/autocode/util/database"
+	"os/exec"
 )
 
 type ProBasic struct {
@@ -35,6 +36,9 @@ func (p *ProBasic) Start() {
 	}
 	p.init()
 	p.a.GeneralAutoCode()
+	var cmd *exec.Cmd
+	cmd = exec.Command("go fmt")
+	cmd.Start()
 }
 
 func checkProBasic(p *ProBasic) bool {

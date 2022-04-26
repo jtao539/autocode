@@ -34,7 +34,7 @@ func (a *Atom) CreateModel() {
 		query.Scan(&m.columnName, &m.columnComment, &m.dataType)
 		list = append(list, m)
 	}
-	code := fmt.Sprintf("package model\n\nimport (\n\t\"MODNAME/common/request\"\n\t\"database/sql\"\n)\n\ntype %s struct {\n", a.Name)
+	code := fmt.Sprintf("package model\n\nimport (\n\t\"%s/common/request\"\n\t\"database/sql\"\n)\n\ntype %s struct {\n", a.ModName, a.Name)
 	for i := 0; i < len(list); i++ {
 		m := list[i]
 		tag := fmt.Sprintf("`db:\"%s\" json:\"%s\"`", m.columnName, m.columnName)
