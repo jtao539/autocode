@@ -6,7 +6,7 @@ import (
 )
 
 func TestAuto(t *testing.T) {
-	db.Init("root", "123456", "localhost", "3306", "sale")
-	a := Atom{Name: "Product", TblName: "tbl_product", Path: ".", ModName: "autocode"}
+	db.Init("root", "admin539", "localhost", "3307", "sale")
+	a := Atom{Name: "Department", TblName: "tbl_department", Path: "..", ModName: "testimpl"}
 	a.GeneralAutoCode()
 }

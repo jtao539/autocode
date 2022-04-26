@@ -1,4 +1,4 @@
-package db
+package database
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 
 const Tag = "db"
 
-func commonInsert(o interface{}, tbl string) string {
+func CommonInsert(o interface{}, tbl string) string {
 	sql := "INSERT INTO "
 	sql += tbl + "("
 	t := reflect.TypeOf(o)
@@ -29,8 +29,8 @@ func commonInsert(o interface{}, tbl string) string {
 	return sql
 }
 
-// commonUpdate 通用更新语句生成，o 为DTO, tbl 为表名称， args 为需要跳过的字段
-func commonUpdateO(o interface{}, tbl string, args ...string) string {
+// CommonUpdateO 通用更新语句生成，o 为DTO, tbl 为表名称， args 为需要跳过的字段
+func CommonUpdateO(o interface{}, tbl string, args ...string) string {
 	sql := "UPDATE "
 	sql += tbl + " SET "
 	t := reflect.TypeOf(o)
@@ -61,15 +61,15 @@ func commonUpdateO(o interface{}, tbl string, args ...string) string {
 	return sql
 }
 
-// commonUpdate 通用更新语句生成，o 为DTO, a 为entity tbl 为表名称， 通过对比o和a获取跳过的字段
-func commonUpdate(o interface{}, a interface{}, tbl string) string {
+// CommonUpdate 通用更新语句生成，o 为DTO, a 为entity tbl 为表名称， 通过对比o和a获取跳过的字段
+func CommonUpdate(o interface{}, a interface{}, tbl string) string {
 	return localUpdate(o, a, tbl, func(tagName string) bool {
 		return contain(tagName, "id", "code", "status")
 	})
 }
 
-// commonUpdateP 通用更新语句生成，o 为DTO, a 为entity tbl 为表名称， 通过对比o和a获取跳过的字段，args 为需要跳过的字段
-func commonUpdateP(o interface{}, a interface{}, tbl string, args ...string) string {
+// CommonUpdateP 通用更新语句生成，o 为DTO, a 为entity tbl 为表名称， 通过对比o和a获取跳过的字段，args 为需要跳过的字段
+func CommonUpdateP(o interface{}, a interface{}, tbl string, args ...string) string {
 	return localUpdate(o, a, tbl, func(tagName string) bool {
 		return containArray(tagName, args)
 	}, func(tagName string) bool {
@@ -141,9 +141,9 @@ func localUpdate(o interface{}, a interface{}, tbl string, fs ...func(tagName st
 	return sql
 }
 
-// commonSelect 条件查询语句生成, o 为DTO, a 为entity tbl 为表名称, tags为跳过的查找字段
+// CommonSelect 条件查询语句生成, o 为DTO, a 为entity tbl 为表名称, tags为跳过的查找字段
 // str := SELECT * FROM T_Employee WHERE FNumber BETWEEN 'DEV001' AND 'DEV008' AND FSalary BETWEEN 3000 AND 6000
-func commonSelect(o interface{}, tbl string, tags ...string) string {
+func CommonSelect(o interface{}, tbl string, tags ...string) string {
 	sql := "SELECT * FROM " + tbl + " WHERE "
 	ov := reflect.ValueOf(o)
 	ot := reflect.TypeOf(o)
@@ -193,7 +193,7 @@ func commonSelect(o interface{}, tbl string, tags ...string) string {
 	return sql
 }
 
-func commonSelectWithFactor(o interface{}, tbl string, factors []string, tags ...string) string {
+func CommonSelectWithFactor(o interface{}, tbl string, factors []string, tags ...string) string {
 	sql := "SELECT * FROM " + tbl + " WHERE "
 	ov := reflect.ValueOf(o)
 	ot := reflect.TypeOf(o)
@@ -246,7 +246,7 @@ func commonSelectWithFactor(o interface{}, tbl string, factors []string, tags ..
 	return sql
 }
 
-func commonSelectP(o interface{}, tbl string, factors ...string) string {
+func CommonSelectP(o interface{}, tbl string, factors ...string) string {
 	sql := "SELECT * FROM " + tbl + " WHERE "
 	ov := reflect.ValueOf(o)
 	ot := reflect.TypeOf(o)
