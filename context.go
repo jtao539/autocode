@@ -15,14 +15,6 @@ type ProBasic struct {
 	a       atom.Atom
 }
 
-type DataBase struct {
-	DBHost string
-	DBUser string
-	DBPass string
-	DBPort string
-	DBName string
-}
-
 func (p *ProBasic) init() {
 	if flag := checkProBasic(p); flag {
 		panic("基础数据 不能为空")
