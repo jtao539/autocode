@@ -141,6 +141,19 @@ func (a *Atom) createApi() {
 }
 
 func (a *Atom) createRouter() {
+
+	register := fmt.Sprintf("%s/router/register.go", a.Path)
+	if flag, _ := PathExists(register); !flag {
+		code := "package router\n\nimport (\n\t\"github.com/gin-gonic/gin\"\n)\n\ntype Router struct {\n}\n\nvar router Router\n\nfunc Register(g *gin.Engine) {\n}"
+		f, err := os.OpenFile(register, os.O_WRONLY|os.O_CREATE, 0644)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		f.Write([]byte(code))
+		defer f.Close()
+	}
+
 	str := "package router\n\nimport (\n\t\"github.com/gin-gonic/gin\"\n\t\"MODNAME/api\"\n\t\"github.com/jtao539/autocode/middleWare\"\n)\n\ntype DepartmentRouter struct {\n\twebApi api.DepartmentApi\n}\n\nfunc (d *DepartmentRouter) InitDepartmentRouter(g *gin.Engine) {\n\tdeRouter := g.Group(\"department\")\n\t{\n\t\tdeRouter.POST(\"list\", d.webApi.GetDepartmentList)\n\t\tdeRouter.GET(\":id\", middleWare.IdFilter, d.webApi.GetDepartmentById)\n\t\tdeRouter.POST(\"add\", d.webApi.AddDepartment)\n\t\tdeRouter.POST(\"delete\", d.webApi.DeleteDepartment)\n\t\tdeRouter.POST(\"update\", d.webApi.UpdateDepartment)\n\t}\n}\n"
 	str = strings.ReplaceAll(str, "MODNAME", a.ModName)
 	code := strings.ReplaceAll(str, "Department", a.Name)
