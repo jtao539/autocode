@@ -15,7 +15,7 @@ func SafeUpdate(o interface{}, a interface{}, tbl string) (string, []interface{}
 	})
 }
 
-// safeUpdateP 安全的更新语句生成，o 为DTO, a 为entity tbl 为表名称， 通过对比o和a获取跳过的字段，args 为需要跳过的字段
+// safeUpdateP 安全的更新语句生成，o 为DTO, a 为entity tbl 为表名称， 通过对比o和a获取跳过的字段，args 为需要手动跳过的字段
 // 返回值包含带占位符的sql和参数数组
 func safeUpdateP(o interface{}, a interface{}, tbl string, args ...string) (string, []interface{}) {
 	return safeLocalUpdate(o, a, tbl, func(tagName string) bool {
@@ -89,7 +89,7 @@ func safeLocalUpdate(o interface{}, a interface{}, tbl string, fs ...func(tagNam
 	return sql, paramsResult
 }
 
-// safeSelect 安全条件查询语句生成(采用参数化查询，未直接拼接SQL语句), o 为DTO, a 为entity tbl 为表名称, tags为跳过的查找字段
+// safeSelect 安全条件查询语句生成(采用参数化查询，未直接拼接SQL语句), o 为DTO, a 为entity tbl 为表名称, tags为手动跳过的查找字段
 // 返回值为带占位符的SQL以及对应的参数数组
 func safeSelect(o interface{}, tbl string, tags ...string) (sqlStr string, params []interface{}) {
 	var paramsResult []interface{}
@@ -146,6 +146,7 @@ func safeSelect(o interface{}, tbl string, tags ...string) (sqlStr string, param
 }
 
 // safeSelect 安全的可手动介入查询条件的查询语句生成
+// 返回值为带占位符的SQL以及对应的参数数组
 func safeSelectWithFactor(o interface{}, tbl string, factors []string, tags ...string) (sqlStr string, params []interface{}) {
 	var paramsResult []interface{}
 	sql := "SELECT * FROM " + tbl + " WHERE "
