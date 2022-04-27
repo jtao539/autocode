@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/jtao539/autocode/common/definiteError"
+	"reflect"
 )
 
 type SqlPro struct {
@@ -13,7 +14,8 @@ type SqlPro struct {
 
 // Select 列表查找, dest为要查找的数据类型数组, request为查询条件结构体, table 为表名称, tags为需要跳过的字段
 func (s *SqlPro) Select(dest interface{}, request interface{}, table string, tags ...string) error {
-	str, params := SafeSelect(request, table, tags...)
+	array := anythingToSlice(dest)
+	str, params := SafeSelect(array, table, tags...)
 	err := s.DB.Select(&dest, str, params...)
 	return err
 }
@@ -31,9 +33,9 @@ func (s *SqlPro) Update(request interface{}, entity interface{}, table string, t
 	var rows sql.Result
 	str, params := SafeUpdate(request, entity, table)
 	if len(tx) > 0 {
-		rows, err = tx[0].Exec(str, params)
+		rows, err = tx[0].Exec(str, params...)
 	} else {
-		rows, err = s.DB.Exec(str, params)
+		rows, err = s.DB.Exec(str, params...)
 	}
 	if err != nil {
 		return err
@@ -51,9 +53,9 @@ func (s *SqlPro) UpdateP(request interface{}, entity interface{}, table string, 
 	var rows sql.Result
 	str, params := SafeUpdateP(request, entity, table, fields...)
 	if len(tx) > 0 {
-		rows, err = tx[0].Exec(str, params)
+		rows, err = tx[0].Exec(str, params...)
 	} else {
-		rows, err = s.DB.Exec(str, params)
+		rows, err = s.DB.Exec(str, params...)
 	}
 	if err != nil {
 		return err
@@ -75,9 +77,9 @@ func (s *SqlPro) InsertOne(one interface{}, table string, tx ...*sqlx.Tx) error 
 	var rows sql.Result
 	str := CommonInsert(one, table)
 	if len(tx) > 0 {
-		_, err = tx[0].NamedExec(str, one)
+		rows, err = tx[0].NamedExec(str, one)
 	} else {
-		_, err = s.DB.NamedExec(str, one)
+		rows, err = s.DB.NamedExec(str, one)
 	}
 	if err != nil {
 		return err
@@ -87,4 +89,20 @@ func (s *SqlPro) InsertOne(one interface{}, table string, tx ...*sqlx.Tx) error 
 		return definiteError.InsertError
 	}
 	return err
+}
+
+func anythingToSlice(a interface{}) []interface{} {
+	v := reflect.ValueOf(a)
+	switch v.Kind() {
+	case reflect.Slice, reflect.Array:
+		result := make([]interface{}, v.Len())
+		for i := 0; i < v.Len(); i++ {
+			result[i] = v.Index(i).Interface()
+			t := reflect.TypeOf(result[i])
+			fmt.Println("t = ", t)
+		}
+		return result
+	default:
+		panic("not supported")
+	}
 }
