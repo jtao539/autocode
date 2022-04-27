@@ -13,14 +13,14 @@ type SqlPro struct {
 
 // Select 列表查找, dest为要查找的数据类型数组, request为查询条件结构体, table 为表名称, tags为需要跳过的字段
 func (s *SqlPro) Select(dest interface{}, request interface{}, table string, tags ...string) error {
-	str, params := safeSelect(request, table, tags...)
+	str, params := SafeSelect(request, table, tags...)
 	err := s.DB.Select(&dest, str, params...)
 	return err
 }
 
 // SelectWithFactor 可手动介入查询条件的列表查找, dest为要查找的数据类型数组, request为查询条件结构体, table 为表名称, factors 为sql条件, tags为需要跳过的字段
 func (s *SqlPro) SelectWithFactor(dest interface{}, request interface{}, table string, factors []string, tags ...string) error {
-	str, params := safeSelectWithFactor(request, table, factors, tags...)
+	str, params := SafeSelectWithFactor(request, table, factors, tags...)
 	err := s.DB.Select(&dest, str, params...)
 	return err
 }
@@ -29,7 +29,7 @@ func (s *SqlPro) SelectWithFactor(dest interface{}, request interface{}, table s
 func (s *SqlPro) Update(request interface{}, entity interface{}, table string, tx ...*sqlx.Tx) error {
 	var err error
 	var rows sql.Result
-	str, params := safeUpdate(request, entity, table)
+	str, params := SafeUpdate(request, entity, table)
 	if len(tx) > 0 {
 		rows, err = tx[0].Exec(str, params)
 	} else {
@@ -49,7 +49,7 @@ func (s *SqlPro) Update(request interface{}, entity interface{}, table string, t
 func (s *SqlPro) UpdateP(request interface{}, entity interface{}, table string, fields []string, tx ...*sqlx.Tx) error {
 	var err error
 	var rows sql.Result
-	str, params := safeUpdateP(request, entity, table, fields...)
+	str, params := SafeUpdateP(request, entity, table, fields...)
 	if len(tx) > 0 {
 		rows, err = tx[0].Exec(str, params)
 	} else {
@@ -85,25 +85,6 @@ func (s *SqlPro) InsertOne(one interface{}, table string, tx ...*sqlx.Tx) error 
 	AffectedNum, _ := rows.RowsAffected()
 	if AffectedNum == 0 {
 		return definiteError.InsertError
-	}
-	return err
-}
-
-func (s *SqlPro) DeleteOneById(table string, id int, tx ...*sqlx.Tx) error {
-	var err error
-	var rows sql.Result
-	str := fmt.Sprintf("delete from %s where id = ?", table)
-	if len(tx) > 0 {
-		rows, err = tx[0].Exec(str, id)
-	} else {
-		rows, err = s.DB.Exec(str, id)
-	}
-	if err != nil {
-		return err
-	}
-	AffectedNum, _ := rows.RowsAffected()
-	if AffectedNum == 0 {
-		return definiteError.DeleteError
 	}
 	return err
 }

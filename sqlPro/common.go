@@ -29,7 +29,7 @@ func CommonInsert(o interface{}, tbl string) string {
 	return sql
 }
 
-// CommonUpdateO 通用更新语句生成，o 为DTO, tbl 为表名称， args 为需要跳过的字段
+// commonUpdateO 通用更新语句生成，o 为DTO, tbl 为表名称， args 为需要跳过的字段
 func commonUpdateO(o interface{}, tbl string, args ...string) string {
 	sql := "UPDATE "
 	sql += tbl + " SET "
@@ -61,14 +61,14 @@ func commonUpdateO(o interface{}, tbl string, args ...string) string {
 	return sql
 }
 
-// CommonUpdate 通用更新语句生成，o 为DTO, a 为entity tbl 为表名称， 通过对比o和a获取跳过的字段
+// commonUpdate 通用更新语句生成，o 为DTO, a 为entity tbl 为表名称， 通过对比o和a获取跳过的字段
 func commonUpdate(o interface{}, a interface{}, tbl string) string {
 	return localUpdate(o, a, tbl, func(tagName string) bool {
 		return contain(tagName, "id", "code", "status")
 	})
 }
 
-// CommonUpdateP 通用更新语句生成，o 为DTO, a 为entity tbl 为表名称， 通过对比o和a获取跳过的字段，args 为需要跳过的字段
+// commonUpdateP 通用更新语句生成，o 为DTO, a 为entity tbl 为表名称， 通过对比o和a获取跳过的字段，args 为需要跳过的字段
 func commonUpdateP(o interface{}, a interface{}, tbl string, args ...string) string {
 	return localUpdate(o, a, tbl, func(tagName string) bool {
 		return containArray(tagName, args)
@@ -141,7 +141,7 @@ func localUpdate(o interface{}, a interface{}, tbl string, fs ...func(tagName st
 	return sql
 }
 
-// CommonSelect 条件查询语句生成, o 为DTO, a 为entity tbl 为表名称, tags为跳过的查找字段
+// commonSelect 条件查询语句生成, o 为DTO, a 为entity tbl 为表名称, tags为跳过的查找字段
 // str := SELECT * FROM T_Employee WHERE FNumber BETWEEN 'DEV001' AND 'DEV008' AND FSalary BETWEEN 3000 AND 6000
 func commonSelect(o interface{}, tbl string, tags ...string) string {
 	sql := "SELECT * FROM " + tbl + " WHERE "

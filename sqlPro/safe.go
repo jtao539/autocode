@@ -1,7 +1,10 @@
 package sqlPro
 
 import (
+	"database/sql"
 	"fmt"
+	"github.com/jmoiron/sqlx"
+	"github.com/jtao539/autocode/common/definiteError"
 	"reflect"
 	"strconv"
 	"strings"
@@ -9,7 +12,7 @@ import (
 
 // SafeUpdate 安全的更新语句生成，o 为DTO, a 为entity tbl 为表名称， 通过对比o和a获取跳过的字段
 // 返回值包含带占位符的sql和参数数组
-func safeUpdate(o interface{}, a interface{}, tbl string) (string, []interface{}) {
+func SafeUpdate(o interface{}, a interface{}, tbl string) (string, []interface{}) {
 	return safeLocalUpdate(o, a, tbl, func(tagName string) bool {
 		return contain(tagName, "id", "code", "status")
 	})
@@ -17,7 +20,7 @@ func safeUpdate(o interface{}, a interface{}, tbl string) (string, []interface{}
 
 // SafeUpdateP 安全的更新语句生成，o 为DTO, a 为entity tbl 为表名称， 通过对比o和a获取跳过的字段，args 为需要手动跳过的字段
 // 返回值包含带占位符的sql和参数数组
-func safeUpdateP(o interface{}, a interface{}, tbl string, args ...string) (string, []interface{}) {
+func SafeUpdateP(o interface{}, a interface{}, tbl string, args ...string) (string, []interface{}) {
 	return safeLocalUpdate(o, a, tbl, func(tagName string) bool {
 		return containArray(tagName, args)
 	}, func(tagName string) bool {
@@ -25,7 +28,7 @@ func safeUpdateP(o interface{}, a interface{}, tbl string, args ...string) (stri
 	})
 }
 
-// safeLocalUpdate 安全的更新语句生成，o 为DTO, a 为entity tbl 为表名称， 通过对比o和a获取跳过的字段， fs为所有满足条件需要跳过的函数
+// SafeLocalUpdate 安全的更新语句生成，o 为DTO, a 为entity tbl 为表名称， 通过对比o和a获取跳过的字段， fs为所有满足条件需要跳过的函数
 // 返回值为带占位符的SQL以及对应的参数数组
 func safeLocalUpdate(o interface{}, a interface{}, tbl string, fs ...func(tagName string) bool) (sqlStr string, params []interface{}) {
 	var paramsResult []interface{}
@@ -91,7 +94,7 @@ func safeLocalUpdate(o interface{}, a interface{}, tbl string, fs ...func(tagNam
 
 // SafeSelect 安全条件查询语句生成(采用参数化查询，未直接拼接SQL语句), o 为DTO, a 为entity tbl 为表名称, tags为手动跳过的查找字段
 // 返回值为带占位符的SQL以及对应的参数数组
-func safeSelect(o interface{}, tbl string, tags ...string) (sqlStr string, params []interface{}) {
+func SafeSelect(o interface{}, tbl string, tags ...string) (sqlStr string, params []interface{}) {
 	var paramsResult []interface{}
 	sql := "SELECT * FROM " + tbl + " WHERE "
 	ov := reflect.ValueOf(o)
@@ -147,7 +150,7 @@ func safeSelect(o interface{}, tbl string, tags ...string) (sqlStr string, param
 
 // SafeSelectWithFactor 安全的可手动介入查询条件的查询语句生成
 // 返回值为带占位符的SQL以及对应的参数数组
-func safeSelectWithFactor(o interface{}, tbl string, factors []string, tags ...string) (sqlStr string, params []interface{}) {
+func SafeSelectWithFactor(o interface{}, tbl string, factors []string, tags ...string) (sqlStr string, params []interface{}) {
 	var paramsResult []interface{}
 	sql := "SELECT * FROM " + tbl + " WHERE "
 	ov := reflect.ValueOf(o)
@@ -202,4 +205,23 @@ func safeSelectWithFactor(o interface{}, tbl string, factors []string, tags ...s
 		sql += " limit " + strconv.FormatInt((page-1)*pageSize, 10) + " , " + strconv.FormatInt(pageSize, 10)
 	}
 	return sql, paramsResult
+}
+
+func (s *SqlPro) SafeDeleteById(table string, id int, tx ...*sqlx.Tx) error {
+	var err error
+	var rows sql.Result
+	str := fmt.Sprintf("delete from %s where id = ?", table)
+	if len(tx) > 0 {
+		rows, err = tx[0].Exec(str, id)
+	} else {
+		rows, err = s.DB.Exec(str, id)
+	}
+	if err != nil {
+		return err
+	}
+	AffectedNum, _ := rows.RowsAffected()
+	if AffectedNum == 0 {
+		return definiteError.DeleteError
+	}
+	return err
 }
