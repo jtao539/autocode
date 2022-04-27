@@ -14,10 +14,16 @@ var CodeError = errors.New("唯一编码自动生成失败")
 
 var InValidUpdateError = errors.New("非法的数据更新,更新缺少主键")
 
+var UpdateError = errors.New("更新失败")
+
+var InsertError = errors.New("插入数据失败")
+
+var DeleteError = errors.New("删除数据失败")
+
 var InValidSwitchError = errors.New("非法的启用/禁用")
 
 func init() {
-	Array = []error{ProcessError, ReqFieldError, RepeatPhoneError, CodeError, InValidSwitchError, InValidUpdateError}
+	Array = []error{ProcessError, ReqFieldError, RepeatPhoneError, CodeError, InValidSwitchError, InValidUpdateError, UpdateError}
 }
 
 func Contain(err error) bool {
