@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/jmoiron/sqlx"
-	"github.com/jtao539/autocode/common/definiteError"
 	. "github.com/jtao539/autocode/sqlFactory"
 )
 
@@ -41,7 +40,7 @@ func (s *SqlPro) Update(request interface{}, entity interface{}, table string, t
 	}
 	AffectedNum, _ := rows.RowsAffected()
 	if AffectedNum == 0 {
-		return definiteError.UpdateError
+		return UpdateError
 	}
 	return err
 }
@@ -61,7 +60,7 @@ func (s *SqlPro) UpdateP(request interface{}, entity interface{}, table string, 
 	}
 	AffectedNum, _ := rows.RowsAffected()
 	if AffectedNum == 0 {
-		return definiteError.UpdateError
+		return UpdateError
 	}
 	return err
 }
@@ -85,7 +84,7 @@ func (s *SqlPro) InsertOne(one interface{}, table string, tx ...*sqlx.Tx) error 
 	}
 	AffectedNum, _ := rows.RowsAffected()
 	if AffectedNum == 0 {
-		return definiteError.InsertError
+		return InsertError
 	}
 	return err
 }
@@ -104,7 +103,7 @@ func (s *SqlPro) DeleteOneById(table string, id int, tx ...*sqlx.Tx) error {
 	}
 	AffectedNum, _ := rows.RowsAffected()
 	if AffectedNum == 0 {
-		return definiteError.DeleteError
+		return DeleteError
 	}
 	return err
 }

@@ -3,9 +3,14 @@ package atom
 import (
 	"fmt"
 	"github.com/jtao539/autocode/util/database"
+	"io/ioutil"
+	"log"
 	"os"
 	"strings"
 )
+
+const template = "./template/"
+const MODName = "github.com/jtao539/autocode/template"
 
 type Atom struct {
 	Name    string
@@ -80,8 +85,14 @@ func (a *Atom) CreateModel() {
 
 func (a *Atom) createDB() {
 	global := fmt.Sprintf("%s/db/global.go", a.Path)
+	tempGlobal := template + global
 	if flag, _ := PathExists(global); !flag {
-		code := "package db\n\nimport (\n\t\"fmt\"\n\t\"github.com/jmoiron/sqlx\"\n\n\t_ \"github.com/go-sql-driver/mysql\"\n)\n\nvar GDB *saleDB\n\nfunc Init(userName, password, host, port, name string) {\n\tconStr := fmt.Sprintf(\"%s:%s@tcp(%s:%s)/%s\", userName, password, host, port, name)\n\tconnect(\"mysql\", conStr)\n}\n\nfunc connect(driveName, dialect string) {\n\tdb, err := sqlx.Open(driveName, dialect)\n\tif err != nil {\n\t\tpanic(fmt.Sprintf(\"Error in connect db:%s\", err.Error()))\n\t}\n\terr = db.Ping()\n\tif err != nil {\n\t\tpanic(fmt.Sprintf(\"Error in connect db:%s\", err.Error()))\n\t}\n\tGDB = &saleDB{DB: db}\n}\n\ntype saleDB struct {\n\tDB *sqlx.DB\n}\n\nfunc Close() {\n\tGDB.DB.Close()\n}\n"
+		var code string
+		if bytes, err := ioutil.ReadFile(tempGlobal); err != nil {
+			log.Fatal("Failed to read file: " + tempGlobal)
+		} else {
+			code = string(bytes)
+		}
 		f, err := os.OpenFile(global, os.O_WRONLY|os.O_CREATE, 0644)
 		if err != nil {
 			fmt.Println(err)
@@ -90,12 +101,18 @@ func (a *Atom) createDB() {
 		f.Write([]byte(code))
 		defer f.Close()
 	}
-	str := "package db\n\nimport (\n\t\"MODNAME/model\"\n\t\"database/sql\"\n\t\"fmt\"\n\t\"github.com/jmoiron/sqlx\"\n\t. \"github.com/jtao539/autocode/sqlPro\"\n\t\"time\"\n)\n\ntype DepartmentDB struct {\n\tentity model.Department\n}\n\nfunc (d *DepartmentDB) GetDepartmentList(department model.DepartmentReq) (err error, list []model.Department) {\n\tstr := CommonSelect(department, d.entity.TableName())\n\tfmt.Println(str)\n\terr = GDB.DB.Select(&list, str)\n\treturn\n}\n\nfunc (d *DepartmentDB) GetDepartmentNameById(id int) (err error, department string) {\n\tstr := fmt.Sprintf(\"select name from %s where id=%d\", d.entity.TableName(), id)\n\terr = GDB.DB.Get(&department, str)\n\treturn\n}\n\nfunc (d *DepartmentDB) GetDepartmentById(id int) (err error, department model.Department) {\n\tstr := fmt.Sprintf(\"select * from %s where id=%d\", d.entity.TableName(), id)\n\terr = GDB.DB.Get(&department, str)\n\treturn\n}\n\nfunc (d *DepartmentDB) AddDepartment(department model.Department, tx ...*sqlx.Tx) error {\n\tdepartment.CreateTime = sql.NullInt32{Int32: int32(time.Now().Unix()), Valid: true}\n\tvar err error\n\tstr := CommonInsert(department, d.entity.TableName())\n\tif len(tx) > 0 {\n\t\t_, err = tx[0].NamedExec(str, department)\n\t} else {\n\t\t_, err = GDB.DB.NamedExec(str, department)\n\t}\n\treturn err\n}\n\nfunc (d *DepartmentDB) DeleteDepartmentById(id int, tx ...*sqlx.Tx) (e error, affectedNum int) {\n\tvar err error\n\tvar rows sql.Result\n\tstr := fmt.Sprintf(\"delete from %s where id = %d\", d.entity.TableName(), id)\n\tif len(tx) > 0 {\n\t\trows, err = tx[0].Exec(str)\n\t} else {\n\t\trows, err = GDB.DB.Exec(str)\n\t}\n\taffected, err := rows.RowsAffected()\n\tif err != nil {\n\t\treturn err, 0\n\t}\n\treturn err, int(affected)\n}\n\nfunc (d *DepartmentDB) UpdateDepartment(department model.DepartmentDTO, tx ...*sqlx.Tx) error {\n\tvar err error\n\tstr := CommonUpdate(department, d.entity, d.entity.TableName())\n\tif len(tx) > 0 {\n\t\t_, err = tx[0].Exec(str)\n\t} else {\n\t\t_, err = GDB.DB.Exec(str)\n\t}\n\treturn err\n}\n"
-	str = strings.ReplaceAll(str, "MODNAME", a.ModName)
-	code := strings.ReplaceAll(str, "Department", a.Name)
 	fileName := LowFirst(a.Name)
-	code = strings.ReplaceAll(code, "department", fileName)
 	filePath := fmt.Sprintf("%s/db/%s.go", a.Path, fileName)
+	tempFilePath := template + filePath
+	var str string
+	if bytes, err := ioutil.ReadFile(tempFilePath); err != nil {
+		log.Fatal("Failed to read file: " + tempFilePath)
+	} else {
+		str = string(bytes)
+	}
+	str = strings.ReplaceAll(str, MODName, a.ModName)
+	code := strings.ReplaceAll(str, "Department", a.Name)
+	code = strings.ReplaceAll(code, "department", fileName)
 	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		fmt.Println(err)
@@ -107,12 +124,18 @@ func (a *Atom) createDB() {
 }
 
 func (a *Atom) createService() {
-	str := "package service\n\nimport (\n\t\"MODNAME/db\"\n\t\"MODNAME/model\"\n\t\"errors\"\n\t\"github.com/jtao539/autocode/util\"\n\t\"time\"\n)\n\ntype DepartmentService struct {\n\trepos db.DepartmentDB\n}\n\nfunc (d *DepartmentService) GetDepartmentList(departmentReq model.DepartmentReq) (error error, result interface{}) {\n\terr, list := d.repos.GetDepartmentList(departmentReq)\n\tif err != nil {\n\t\terror = err\n\t\treturn\n\t}\n\tdtoList := make([]model.DepartmentDTO, len(list))\n\tfor i := 0; i < len(list); i++ {\n\t\tutil.Entity2DTO(list[i], &dtoList[i])\n\t}\n\tresult = dtoList\n\treturn\n}\n\nfunc (d *DepartmentService) GetDepartmentById(id int) (err error, result interface{}) {\n\terr, m := d.repos.GetDepartmentById(id)\n\tvar department model.DepartmentDTO\n\tutil.Entity2DTO(m, &department)\n\tresult = department\n\treturn\n}\n\nfunc (d *DepartmentService) AddDepartment(departmentReq model.DepartmentReq) error {\n\tvar department model.Department\n\tutil.DTO2Entity(departmentReq.DepartmentDTO, &department)\n\tif departmentReq.UserId != 0 {\n\t\tdepartment.CreateUserId = util.IntToNullInt32(departmentReq.UserId)\n\t}\n\tdepartment.CreateTime = util.IntToNullInt32(int(time.Now().Unix()))\n\treturn d.repos.AddDepartment(department)\n}\n\nfunc (d *DepartmentService) DeleteDepartmentById(departmentReq model.DepartmentReq) (err error, effected int) {\n\tdto := departmentReq.DepartmentDTO\n\treturn d.repos.DeleteDepartmentById(dto.Id)\n}\n\nfunc (d *DepartmentService) UpdateDepartment(departmentReq model.DepartmentReq) error {\n\tdto := departmentReq.DepartmentDTO\n\tif dto.Id == 0 {\n\t\treturn errors.New(\"非法的数据更新\")\n\t}\n\treturn d.repos.UpdateDepartment(dto)\n}\n"
-	str = strings.ReplaceAll(str, "MODNAME", a.ModName)
-	code := strings.ReplaceAll(str, "Department", a.Name)
 	fileName := LowFirst(a.Name)
-	code = strings.ReplaceAll(code, "department", fileName)
 	filePath := fmt.Sprintf("%s/service/%s.go", a.Path, fileName)
+	tempFilePath := template + filePath
+	var str string
+	if bytes, err := ioutil.ReadFile(tempFilePath); err != nil {
+		log.Fatal("Failed to read file: " + tempFilePath)
+	} else {
+		str = string(bytes)
+	}
+	str = strings.ReplaceAll(str, MODName, a.ModName)
+	code := strings.ReplaceAll(str, "Department", a.Name)
+	code = strings.ReplaceAll(code, "department", fileName)
 	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		fmt.Println(err)
@@ -124,12 +147,18 @@ func (a *Atom) createService() {
 }
 
 func (a *Atom) createApi() {
-	str := "package api\n\nimport (\n\t\"fmt\"\n\t\"github.com/gin-gonic/gin\"\n\t\"log\"\n\t\"strconv\"\n\t. \"MODNAME/common/definiteError\"\n\t\"MODNAME/common/response\"\n\t\"MODNAME/model\"\n\t\"MODNAME/service\"\n)\n\ntype DepartmentApi struct {\n\tserv service.DepartmentService\n}\n\nfunc (d *DepartmentApi) GetDepartmentList(c *gin.Context) {\n\tvar json model.DepartmentReq\n\tif err := c.ShouldBindJSON(&json); err != nil {\n\t\tlog.Println(err)\n\t\tresponse.FailByJsonError(c)\n\t\treturn\n\t}\n\terr, list := d.serv.GetDepartmentList(json)\n\tif err != nil {\n\t\tif Contain(err) {\n\t\t\tresponse.FailWithMessage(err.Error(), c)\n\t\t\treturn\n\t\t} else {\n\t\t\tlog.Println(err)\n\t\t\tresponse.Fail(c)\n\t\t\treturn\n\t\t}\n\t} else {\n\t\tjson.Page = 0\n\t\t_, allList := d.serv.GetDepartmentList(json)\n\t\tresponse.OkWithListData(response.GetLength(allList), list, c)\n\t}\n}\n\nfunc (d *DepartmentApi) GetDepartmentById(c *gin.Context) {\n\tids := c.Param(\"id\")\n\tid, _ := strconv.Atoi(ids)\n\terr, department := d.serv.GetDepartmentById(id)\n\tif err != nil {\n\t\tif Contain(err) {\n\t\t\tresponse.FailWithMessage(err.Error(), c)\n\t\t\treturn\n\t\t} else {\n\t\t\tlog.Println(err)\n\t\t\tresponse.Fail(c)\n\t\t\treturn\n\t\t}\n\t} else {\n\t\tresponse.OkWithData(department, c)\n\t}\n}\n\nfunc (d *DepartmentApi) AddDepartment(c *gin.Context) {\n\tvar json model.DepartmentReq\n\tif err := c.ShouldBindJSON(&json); err != nil {\n\t\tlog.Println(err)\n\t\tresponse.FailByJsonError(c)\n\t\treturn\n\t}\n\terr := d.serv.AddDepartment(json)\n\tif err != nil {\n\t\tif Contain(err) {\n\t\t\tresponse.FailWithMessage(err.Error(), c)\n\t\t\treturn\n\t\t} else {\n\t\t\tlog.Println(err)\n\t\t\tresponse.Fail(c)\n\t\t\treturn\n\t\t}\n\t} else {\n\t\tresponse.Ok(c)\n\t}\n}\n\nfunc (d *DepartmentApi) AddDepartmentForm(c *gin.Context) {\n\tvar form model.DepartmentReq\n\tMForm, err := c.MultipartForm()\n\tif err != nil {\n\t\tresponse.FailByFormError(c)\n\t\treturn\n\t}\n\terr = response.Decoder.Decode(&form, MForm.Value)\n\tif err != nil {\n\t\tresponse.FailByFormError(c)\n\t\treturn\n\t}\n\terr = d.serv.AddDepartment(form)\n\tif err != nil {\n\t\tif Contain(err) {\n\t\t\tresponse.FailWithMessage(err.Error(), c)\n\t\t\treturn\n\t\t} else {\n\t\t\tfmt.Println(err)\n\t\t\tresponse.Fail(c)\n\t\t\treturn\n\t\t}\n\t} else {\n\t\tresponse.Ok(c)\n\t}\n}\n\nfunc (d *DepartmentApi) DeleteDepartment(c *gin.Context) {\n\tvar json model.DepartmentReq\n\tif err := c.ShouldBindJSON(&json); err != nil {\n\t\tlog.Println(err)\n\t\tresponse.FailByJsonError(c)\n\t\treturn\n\t}\n\terr, effectNum := d.serv.DeleteDepartmentById(json)\n\tif err != nil || effectNum == 0 {\n\t\tif Contain(err) {\n\t\t\tresponse.FailWithMessage(err.Error(), c)\n\t\t\treturn\n\t\t} else {\n\t\t\tlog.Println(err)\n\t\t\tresponse.Fail(c)\n\t\t\treturn\n\t\t}\n\t} else {\n\t\tresponse.Ok(c)\n\t}\n}\n\nfunc (d *DepartmentApi) UpdateDepartment(c *gin.Context) {\n\tvar json model.DepartmentReq\n\tif err := c.ShouldBindJSON(&json); err != nil {\n\t\tlog.Println(err)\n\t\tresponse.FailByJsonError(c)\n\t\treturn\n\t}\n\terr := d.serv.UpdateDepartment(json)\n\tif err != nil {\n\t\tif Contain(err) {\n\t\t\tresponse.FailWithMessage(err.Error(), c)\n\t\t\treturn\n\t\t} else {\n\t\t\tlog.Println(err)\n\t\t\tresponse.Fail(c)\n\t\t\treturn\n\t\t}\n\t} else {\n\t\tresponse.Ok(c)\n\t}\n}\n"
-	str = strings.ReplaceAll(str, "MODNAME", a.ModName)
-	code := strings.ReplaceAll(str, "Department", a.Name)
 	fileName := LowFirst(a.Name)
-	code = strings.ReplaceAll(code, "department", fileName)
 	filePath := fmt.Sprintf("%s/api/%s.go", a.Path, fileName)
+	tempFilePath := template + filePath
+	var str string
+	if bytes, err := ioutil.ReadFile(tempFilePath); err != nil {
+		log.Fatal("Failed to read file: " + tempFilePath)
+	} else {
+		str = string(bytes)
+	}
+	str = strings.ReplaceAll(str, MODName, a.ModName)
+	code := strings.ReplaceAll(str, "Department", a.Name)
+	code = strings.ReplaceAll(code, "department", fileName)
 	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		fmt.Println(err)
@@ -141,10 +170,15 @@ func (a *Atom) createApi() {
 }
 
 func (a *Atom) createRouter() {
-
 	register := fmt.Sprintf("%s/router/register.go", a.Path)
+	tempRegister := template + register
 	if flag, _ := PathExists(register); !flag {
-		code := "package router\n\nimport (\n\t\"github.com/gin-gonic/gin\"\n)\n\ntype Router struct {\n}\n\nvar router Router\n\nfunc Register(g *gin.Engine) {\n}"
+		var code string
+		if bytes, err := ioutil.ReadFile(tempRegister); err != nil {
+			log.Fatal("Failed to read file: " + tempRegister)
+		} else {
+			code = string(bytes)
+		}
 		f, err := os.OpenFile(register, os.O_WRONLY|os.O_CREATE, 0644)
 		if err != nil {
 			fmt.Println(err)
@@ -153,13 +187,18 @@ func (a *Atom) createRouter() {
 		f.Write([]byte(code))
 		defer f.Close()
 	}
-
-	str := "package router\n\nimport (\n\t\"MODNAME/api\"\n\t\"github.com/gin-gonic/gin\"\n)\n\ntype DepartmentRouter struct {\n\twebApi api.DepartmentApi\n}\n\nfunc (d *DepartmentRouter) InitDepartmentRouter(g *gin.Engine) {\n\tdeRouter := g.Group(\"department\")\n\t{\n\t\tdeRouter.POST(\"list\", d.webApi.GetDepartmentList)\n\t\tdeRouter.GET(\":id\", d.webApi.GetDepartmentById)\n\t\tdeRouter.POST(\"add\", d.webApi.AddDepartment)\n\t\tdeRouter.POST(\"delete\", d.webApi.DeleteDepartment)\n\t\tdeRouter.POST(\"update\", d.webApi.UpdateDepartment)\n\t}\n}\n"
-	str = strings.ReplaceAll(str, "MODNAME", a.ModName)
-	code := strings.ReplaceAll(str, "Department", a.Name)
 	fileName := LowFirst(a.Name)
-	code = strings.ReplaceAll(code, "department", fileName)
 	filePath := fmt.Sprintf("%s/router/%s.go", a.Path, fileName)
+	tempFilePath := template + filePath
+	var str string
+	if bytes, err := ioutil.ReadFile(tempFilePath); err != nil {
+		log.Fatal("Failed to read file: " + tempFilePath)
+	} else {
+		str = string(bytes)
+	}
+	str = strings.ReplaceAll(str, MODName, a.ModName)
+	code := strings.ReplaceAll(str, "Department", a.Name)
+	code = strings.ReplaceAll(code, "department", fileName)
 	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		fmt.Println(err)
