@@ -2,7 +2,6 @@ package atom
 
 import (
 	"fmt"
-	"github.com/jtao539/autocode"
 	"github.com/jtao539/autocode/util/database"
 	"go/build"
 	"io/ioutil"
@@ -21,6 +20,7 @@ type Atom struct {
 	TblName string
 	Path    string
 	ModName string
+	Version string
 }
 
 type Model struct {
@@ -279,6 +279,7 @@ func PathExists(path string) (bool, error) {
 }
 
 func (a *Atom) GeneralAutoCode() {
+	a.initTemplate()
 	a.Clear()
 	a.MkSomeDir()
 	a.CreateError()
@@ -319,6 +320,6 @@ func (a *Atom) CreateApiFile() {
 	fmt.Println(a.Name, "API 完成")
 }
 
-func init() {
-	template = build.Default.GOPATH + string(filepath.Separator) + "pkg" + string(filepath.Separator) + "mod" + string(filepath.Separator) + "github.com" + string(filepath.Separator) + "jtao539" + string(filepath.Separator) + "autocode@" + autocode.Version + string(filepath.Separator) + "template"
+func (a *Atom) initTemplate() {
+	template = build.Default.GOPATH + string(filepath.Separator) + "pkg" + string(filepath.Separator) + "mod" + string(filepath.Separator) + "github.com" + string(filepath.Separator) + "jtao539" + string(filepath.Separator) + "autocode@" + a.Version + string(filepath.Separator) + "template"
 }

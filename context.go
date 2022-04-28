@@ -7,7 +7,7 @@ import (
 	"os/exec"
 )
 
-const Version = "v0.2.30"
+const Version = "v1.0.0"
 
 type ProBasic struct {
 	Name    string
@@ -21,7 +21,10 @@ func (p *ProBasic) init() {
 	if flag := checkProBasic(p); flag {
 		panic("基础数据 不能为空")
 	}
-	p.a = atom.Atom{Name: p.Name, TblName: p.TblName, Path: p.Path, ModName: p.ModName}
+	if p.Path == "" {
+		p.Path = "."
+	}
+	p.a = atom.Atom{Name: p.Name, TblName: p.TblName, Path: p.Path, ModName: p.ModName, Version: Version}
 }
 
 func (p *ProBasic) Start() {
@@ -36,7 +39,7 @@ func (p *ProBasic) Start() {
 }
 
 func checkProBasic(p *ProBasic) bool {
-	return util.CheckStringNULL(p.Path, p.ModName, p.TblName, p.Name)
+	return util.CheckStringNULL(p.ModName, p.TblName, p.Name)
 }
 
 func InitDB(userName, password, host, port, name string) {
