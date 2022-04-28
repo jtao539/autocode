@@ -4,7 +4,7 @@
 
 #### 生成代码使用示例
 ```go
-  autocode.InitDB("root", "123456", "localhost", "3306", "demo")
+  	autocode.InitDB("root", "123456", "localhost", "3306", "demo")
 	b := autocode.ProBasic{ModName: "testAuto", TblName: "tbl_product", Name: "Product"}
 	b.Start()
 ```
