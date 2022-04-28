@@ -137,7 +137,6 @@ func localUpdate(o interface{}, a interface{}, tbl string, fs ...func(tagName st
 	}
 	sql = sql[:strings.LastIndex(sql, ",")]
 	sql += " where id=" + strconv.FormatInt(v.FieldByName("Id").Int(), 10)
-	fmt.Println(sql)
 	return sql
 }
 

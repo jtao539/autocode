@@ -67,7 +67,7 @@ func (s *SqlPro) UpdateP(request interface{}, entity interface{}, table string, 
 
 func (s *SqlPro) GetOneById(one interface{}, table string, id int) error {
 	str := fmt.Sprintf("select * from %s where id=?", table)
-	return s.DB.Get(&one, str, id)
+	return s.DB.Get(one, str, id)
 }
 
 func (s *SqlPro) InsertOne(one interface{}, table string, tx ...*sqlx.Tx) error {
