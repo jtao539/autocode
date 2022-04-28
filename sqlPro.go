@@ -1,11 +1,11 @@
-package sqlPro
+package autocode
 
 import (
 	"database/sql"
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/jtao539/autocode/common/definiteError"
-	"reflect"
+	. "github.com/jtao539/autocode/sqlFactory"
 )
 
 type SqlPro struct {
@@ -14,9 +14,8 @@ type SqlPro struct {
 
 // Select 列表查找, dest为要查找的数据类型数组, request为查询条件结构体, table 为表名称, tags为需要跳过的字段
 func (s *SqlPro) Select(dest interface{}, request interface{}, table string, tags ...string) error {
-	array := anythingToSlice(dest)
-	str, params := SafeSelect(array, table, tags...)
-	err := s.DB.Select(&dest, str, params...)
+	str, params := SafeSelect(request, table, tags...)
+	err := s.DB.Select(dest, str, params...)
 	return err
 }
 
@@ -91,18 +90,21 @@ func (s *SqlPro) InsertOne(one interface{}, table string, tx ...*sqlx.Tx) error 
 	return err
 }
 
-func anythingToSlice(a interface{}) []interface{} {
-	v := reflect.ValueOf(a)
-	switch v.Kind() {
-	case reflect.Slice, reflect.Array:
-		result := make([]interface{}, v.Len())
-		for i := 0; i < v.Len(); i++ {
-			result[i] = v.Index(i).Interface()
-			t := reflect.TypeOf(result[i])
-			fmt.Println("t = ", t)
-		}
-		return result
-	default:
-		panic("not supported")
+func (s *SqlPro) DeleteOneById(table string, id int, tx ...*sqlx.Tx) error {
+	var err error
+	var rows sql.Result
+	str := fmt.Sprintf("delete from %s where id = ?", table)
+	if len(tx) > 0 {
+		rows, err = tx[0].Exec(str, id)
+	} else {
+		rows, err = s.DB.Exec(str, id)
 	}
+	if err != nil {
+		return err
+	}
+	AffectedNum, _ := rows.RowsAffected()
+	if AffectedNum == 0 {
+		return definiteError.DeleteError
+	}
+	return err
 }

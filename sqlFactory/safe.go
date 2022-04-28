@@ -1,10 +1,7 @@
-package sqlPro
+package sqlFactory
 
 import (
-	"database/sql"
 	"fmt"
-	"github.com/jmoiron/sqlx"
-	"github.com/jtao539/autocode/common/definiteError"
 	"reflect"
 	"strconv"
 	"strings"
@@ -205,23 +202,4 @@ func SafeSelectWithFactor(o interface{}, tbl string, factors []string, tags ...s
 		sql += " limit " + strconv.FormatInt((page-1)*pageSize, 10) + " , " + strconv.FormatInt(pageSize, 10)
 	}
 	return sql, paramsResult
-}
-
-func (s *SqlPro) SafeDeleteById(table string, id int, tx ...*sqlx.Tx) error {
-	var err error
-	var rows sql.Result
-	str := fmt.Sprintf("delete from %s where id = ?", table)
-	if len(tx) > 0 {
-		rows, err = tx[0].Exec(str, id)
-	} else {
-		rows, err = s.DB.Exec(str, id)
-	}
-	if err != nil {
-		return err
-	}
-	AffectedNum, _ := rows.RowsAffected()
-	if AffectedNum == 0 {
-		return definiteError.DeleteError
-	}
-	return err
 }

@@ -1,4 +1,4 @@
-package sqlPro
+package sqlFactory
 
 import (
 	"fmt"
