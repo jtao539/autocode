@@ -2,6 +2,7 @@ package atom
 
 import (
 	"fmt"
+	"github.com/jtao539/autocode"
 	"github.com/jtao539/autocode/util/database"
 	"go/build"
 	"io/ioutil"
@@ -319,5 +320,5 @@ func (a *Atom) CreateApiFile() {
 }
 
 func init() {
-	template = build.Default.GOPATH + string(filepath.Separator) + "pkg" + string(filepath.Separator) + "mod" + string(filepath.Separator) + "github.com" + string(filepath.Separator) + "jtao539" + string(filepath.Separator) + "autocode@v0.2.27" + string(filepath.Separator) + "template"
+	template = build.Default.GOPATH + string(filepath.Separator) + "pkg" + string(filepath.Separator) + "mod" + string(filepath.Separator) + "github.com" + string(filepath.Separator) + "jtao539" + string(filepath.Separator) + "autocode@" + autocode.Version + string(filepath.Separator) + "template"
 }

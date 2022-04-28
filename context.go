@@ -7,6 +7,8 @@ import (
 	"os/exec"
 )
 
+const Version = "v0.2.30"
+
 type ProBasic struct {
 	Name    string
 	TblName string
