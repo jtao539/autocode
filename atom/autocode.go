@@ -3,13 +3,16 @@ package atom
 import (
 	"fmt"
 	"github.com/jtao539/autocode/util/database"
+	"go/build"
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
-const template = "./template"
+var template string
+
 const MODName = "github.com/jtao539/autocode/template"
 
 type Atom struct {
@@ -313,4 +316,8 @@ func (a *Atom) CreateApiFile() {
 		}
 	}
 	fmt.Println(a.Name, "API 完成")
+}
+
+func init() {
+	template = build.Default.GOPATH + string(filepath.Separator) + "pkg" + string(filepath.Separator) + "mod" + string(filepath.Separator) + "github.com" + string(filepath.Separator) + "jtao539" + string(filepath.Separator) + "autocode@v0.2.27"
 }

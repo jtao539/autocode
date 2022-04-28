@@ -1,6 +1,8 @@
 package autocode
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestDemo(t *testing.T) {
 	InitDB("root", "123456", "localhost", "3306", "sale")
