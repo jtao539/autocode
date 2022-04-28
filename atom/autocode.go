@@ -256,7 +256,7 @@ func (a *Atom) MkSomeDir() {
 func MkDir(path, fileName string) {
 	filePath := path + "/" + fileName + "/"
 	if flag, _ := PathExists(filePath); !flag {
-		err := os.Mkdir(filePath, 777)
+		err := os.Mkdir(filePath, 0777)
 		if err != nil {
 			fmt.Println(err)
 			return
