@@ -77,7 +77,7 @@ func (a *Atom) CreateModel() {
 	code += lastLine
 	fileName := LowFirst(a.Name)
 	filePath := fmt.Sprintf("%s/model/%s.go", a.Path, fileName)
-	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0644)
+	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0777)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -97,7 +97,7 @@ func (a *Atom) createDB() {
 		} else {
 			code = string(bytes)
 		}
-		f, err := os.OpenFile(global, os.O_WRONLY|os.O_CREATE, 0644)
+		f, err := os.OpenFile(global, os.O_WRONLY|os.O_CREATE, 0777)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -117,7 +117,7 @@ func (a *Atom) createDB() {
 	str = strings.ReplaceAll(str, MODName, a.ModName)
 	code := strings.ReplaceAll(str, "Department", a.Name)
 	code = strings.ReplaceAll(code, "department", fileName)
-	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0644)
+	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0777)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -140,7 +140,7 @@ func (a *Atom) createService() {
 	str = strings.ReplaceAll(str, MODName, a.ModName)
 	code := strings.ReplaceAll(str, "Department", a.Name)
 	code = strings.ReplaceAll(code, "department", fileName)
-	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0644)
+	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0777)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -163,7 +163,7 @@ func (a *Atom) createApi() {
 	str = strings.ReplaceAll(str, MODName, a.ModName)
 	code := strings.ReplaceAll(str, "Department", a.Name)
 	code = strings.ReplaceAll(code, "department", fileName)
-	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0644)
+	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0777)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -183,7 +183,7 @@ func (a *Atom) createRouter() {
 		} else {
 			code = string(bytes)
 		}
-		f, err := os.OpenFile(register, os.O_WRONLY|os.O_CREATE, 0644)
+		f, err := os.OpenFile(register, os.O_WRONLY|os.O_CREATE, 0777)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -203,7 +203,7 @@ func (a *Atom) createRouter() {
 	str = strings.ReplaceAll(str, MODName, a.ModName)
 	code := strings.ReplaceAll(str, "Department", a.Name)
 	code = strings.ReplaceAll(code, "department", fileName)
-	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0644)
+	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0777)
 	if err != nil {
 		fmt.Println(err)
 		return
