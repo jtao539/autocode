@@ -319,5 +319,5 @@ func (a *Atom) CreateApiFile() {
 }
 
 func init() {
-	template = build.Default.GOPATH + string(filepath.Separator) + "pkg" + string(filepath.Separator) + "mod" + string(filepath.Separator) + "github.com" + string(filepath.Separator) + "jtao539" + string(filepath.Separator) + "autocode@v0.2.27"
+	template = build.Default.GOPATH + string(filepath.Separator) + "pkg" + string(filepath.Separator) + "mod" + string(filepath.Separator) + "github.com" + string(filepath.Separator) + "jtao539" + string(filepath.Separator) + "autocode@v0.2.27" + string(filepath.Separator) + "template"
 }
