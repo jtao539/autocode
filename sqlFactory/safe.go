@@ -78,11 +78,15 @@ func safeLocalUpdate(o interface{}, a interface{}, tbl string, fs ...func(tagNam
 			for i := 0; i < v.Len(); i++ {
 				result += v.Index(i).String() + ","
 			}
-			result = result[:strings.LastIndex(result, ",")]
+			if strings.Contains(result, ",") {
+				result = result[:strings.LastIndex(result, ",")]
+			}
 			paramsResult = append(paramsResult, result)
 		}
 	}
-	sql = sql[:strings.LastIndex(sql, ",")]
+	if strings.Contains(sql, ",") {
+		sql = sql[:strings.LastIndex(sql, ",")]
+	}
 	sql += " where id=?"
 	paramsResult = append(paramsResult, strconv.FormatInt(v.FieldByName("Id").Int(), 10))
 	return sql, paramsResult
