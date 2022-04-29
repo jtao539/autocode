@@ -20,7 +20,7 @@ func (a *Atom) CreateError() {
 	} else {
 		str = string(bytes)
 	}
-	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0644)
+	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0777)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -43,7 +43,7 @@ func (a *Atom) CreateRequest() {
 	} else {
 		str = string(bytes)
 	}
-	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0644)
+	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0777)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -66,7 +66,7 @@ func (a *Atom) CreateResponse() {
 	} else {
 		str = string(bytes)
 	}
-	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0644)
+	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0777)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -89,7 +89,7 @@ func (a *Atom) CreateRResponse() {
 	} else {
 		str = string(bytes)
 	}
-	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0644)
+	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0777)
 	if err != nil {
 		fmt.Println(err)
 		return
