@@ -18,13 +18,17 @@ func CommonInsert(o interface{}, tbl string) string {
 		tagName := t.Field(i).Tag.Get(Tag)
 		sql += tagName + ","
 	}
-	sql = sql[:strings.LastIndex(sql, ",")]
+	if strings.Contains(sql, ",") {
+		sql = sql[:strings.LastIndex(sql, ",")]
+	}
 	sql += ") VALUES ("
 	for i := 0; i < t.NumField(); i++ {
 		tagName := t.Field(i).Tag.Get(Tag)
 		sql += ":" + tagName + ","
 	}
-	sql = sql[:strings.LastIndex(sql, ",")]
+	if strings.Contains(sql, ",") {
+		sql = sql[:strings.LastIndex(sql, ",")]
+	}
 	sql += ")"
 	return sql
 }
@@ -56,7 +60,9 @@ func commonUpdateO(o interface{}, tbl string, args ...string) string {
 			}
 		}
 	}
-	sql = sql[:strings.LastIndex(sql, ",")]
+	if strings.Contains(sql, ",") {
+		sql = sql[:strings.LastIndex(sql, ",")]
+	}
 	sql += " where id=" + strconv.FormatInt(v.FieldByName("Id").Int(), 10)
 	return sql
 }
@@ -131,11 +137,15 @@ func localUpdate(o interface{}, a interface{}, tbl string, fs ...func(tagName st
 			for i := 0; i < v.Len(); i++ {
 				result += v.Index(i).String() + ","
 			}
-			result = result[:strings.LastIndex(result, ",")]
+			if strings.Contains(result, ",") {
+				result = result[:strings.LastIndex(result, ",")]
+			}
 			sql += "'" + result + "'" + ","
 		}
 	}
-	sql = sql[:strings.LastIndex(sql, ",")]
+	if strings.Contains(sql, ",") {
+		sql = sql[:strings.LastIndex(sql, ",")]
+	}
 	sql += " where id=" + strconv.FormatInt(v.FieldByName("Id").Int(), 10)
 	return sql
 }
