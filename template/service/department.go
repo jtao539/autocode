@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/jtao539/autocode/template/common/definiteError"
+	"github.com/jtao539/autocode/template/common/commonError"
 	"github.com/jtao539/autocode/template/db"
 	"github.com/jtao539/autocode/template/model"
 	"github.com/jtao539/autocode/util"
@@ -52,7 +52,7 @@ func (d *DepartmentService) DeleteDepartmentById(departmentReq model.DepartmentR
 func (d *DepartmentService) UpdateDepartment(departmentReq model.DepartmentReq) error {
 	dto := departmentReq.DepartmentDTO
 	if dto.Id == 0 {
-		return definiteError.InValidUpdateError
+		return commonError.InValidUpdateError
 	}
 	return d.repos.UpdateDepartment(dto)
 }

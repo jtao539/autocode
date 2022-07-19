@@ -7,7 +7,7 @@ import (
 	"os/exec"
 )
 
-const Version = "v1.0.4"
+const Version = "v1.0.5"
 
 type ProBasic struct {
 	Name    string

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/jtao539/autocode/template/model"
+	"runtime"
 )
 
 type DepartmentDB struct {
@@ -36,4 +37,12 @@ func (d *DepartmentDB) DeleteDepartmentById(id int, tx ...*sqlx.Tx) error {
 
 func (d *DepartmentDB) UpdateDepartment(department model.DepartmentDTO, tx ...*sqlx.Tx) error {
 	return Pro.Update(department, d.entity, d.entity.TableName(), tx...)
+}
+
+// 获取正在运行的函数名
+func runFuncName() string {
+	pc := make([]uintptr, 1)
+	runtime.Callers(2, pc)
+	f := runtime.FuncForPC(pc[0])
+	return f.Name()
 }
