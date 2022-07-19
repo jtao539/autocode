@@ -18,7 +18,7 @@ func (d *DepartmentDB) GetDepartmentList(department model.DepartmentReq) (err er
 
 func (d *DepartmentDB) GetDepartmentNameById(id int) (err error, department string) {
 	str := fmt.Sprintf("select name from %s where id=?", d.entity.TableName())
-	err = GDB.DB.Get(&department, str, id)
+	err = Pro.DB.Get(&department, str, id)
 	return
 }
 

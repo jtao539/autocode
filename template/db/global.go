@@ -8,7 +8,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-var GDB *saleDB
 var Pro *sqlxp.SqlxP
 
 func Init(userName, password, host, port, name string) {
@@ -25,14 +24,9 @@ func connect(driveName, dialect string) {
 	if err != nil {
 		panic(fmt.Sprintf("Error in connect db:%s", err.Error()))
 	}
-	GDB = &saleDB{DB: db}
 	Pro = &sqlxp.SqlxP{DB: db}
 }
 
-type saleDB struct {
-	DB *sqlx.DB
-}
-
 func Close() {
-	GDB.DB.Close()
+	Pro.DB.Close()
 }
