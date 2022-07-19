@@ -2,6 +2,7 @@ package service
 
 import (
 	"github.com/jtao539/autocode/template/common/commonError"
+	"github.com/jtao539/autocode/template/common/response"
 	"github.com/jtao539/autocode/template/db"
 	"github.com/jtao539/autocode/template/model"
 	"github.com/jtao539/autocode/util"
@@ -13,7 +14,7 @@ type DepartmentService struct {
 }
 
 func (d *DepartmentService) GetDepartmentList(departmentReq model.DepartmentReq) (error error, result interface{}) {
-	err, list := d.repos.GetDepartmentList(departmentReq)
+	err, list, total := d.repos.GetDepartmentList(departmentReq)
 	if err != nil {
 		error = err
 		return
@@ -22,7 +23,7 @@ func (d *DepartmentService) GetDepartmentList(departmentReq model.DepartmentReq)
 	for i := 0; i < len(list); i++ {
 		util.Entity2DTO(list[i], &dtoList[i])
 	}
-	result = dtoList
+	result = response.ListData{List: dtoList, Total: total}
 	return
 }
 

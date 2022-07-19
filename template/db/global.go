@@ -3,13 +3,13 @@ package db
 import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
-	"github.com/jtao539/autocode"
+	"github.com/jtao539/sqlxp"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
 var GDB *saleDB
-var Pro *autocode.SqlPro
+var Pro *sqlxp.SqlxP
 
 func Init(userName, password, host, port, name string) {
 	conStr := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", userName, password, host, port, name)
@@ -26,7 +26,7 @@ func connect(driveName, dialect string) {
 		panic(fmt.Sprintf("Error in connect db:%s", err.Error()))
 	}
 	GDB = &saleDB{DB: db}
-	Pro = &autocode.SqlPro{DB: db}
+	Pro = &sqlxp.SqlxP{DB: db}
 }
 
 type saleDB struct {

@@ -11,8 +11,8 @@ type DepartmentDB struct {
 	entity model.Department
 }
 
-func (d *DepartmentDB) GetDepartmentList(department model.DepartmentReq) (err error, list []model.Department) {
-	err = Pro.Select(&list, department, d.entity.TableName())
+func (d *DepartmentDB) GetDepartmentList(department model.DepartmentReq) (err error, list []model.Department, total int) {
+	err, total = Pro.Select(&list, department, d.entity.TableName())
 	return
 }
 
