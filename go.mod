@@ -7,6 +7,6 @@ require (
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/gorilla/schema v1.2.0
 	github.com/jmoiron/sqlx v1.3.5
-	github.com/jtao539/sqlxp v0.0.3
+	github.com/jtao539/sqlxp v0.0.4
 	go.uber.org/zap v1.21.0
 )
