@@ -6,8 +6,6 @@ import (
 	"github.com/gorilla/schema"
 	"github.com/jtao539/autocode/template/common/commonError"
 	"go.uber.org/zap"
-	"reflect"
-	"strconv"
 )
 
 type PageResult struct {
@@ -21,27 +19,6 @@ var Decoder = schema.NewDecoder()
 
 func init() {
 	Decoder.SetAliasTag("json")
-}
-
-func GetLength(a interface{}) int {
-	v := reflect.ValueOf(a)
-	switch v.Kind() {
-	case reflect.Slice, reflect.Array:
-		return v.Len()
-	default:
-		panic("not supported")
-	}
-}
-
-func IdFilter(c *gin.Context) {
-	ids := c.Param("id")
-	_, err := strconv.Atoi(ids)
-	if err == nil {
-		c.Next()
-		return
-	}
-	FailByIdValid(c)
-	c.Abort()
 }
 
 // Pack data 中存储要返回的数据
