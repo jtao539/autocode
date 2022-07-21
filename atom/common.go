@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 )
 
 func (a *Atom) CreateError() {
@@ -19,6 +20,7 @@ func (a *Atom) CreateError() {
 		log.Fatal("Failed to read file: " + tempFilePath)
 	} else {
 		str = string(bytes)
+		str = strings.ReplaceAll(str, MODName, a.ModName)
 	}
 	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0777)
 	if err != nil {
@@ -42,6 +44,7 @@ func (a *Atom) CreateRequest() {
 		log.Fatal("Failed to read file: " + tempFilePath)
 	} else {
 		str = string(bytes)
+		str = strings.ReplaceAll(str, MODName, a.ModName)
 	}
 	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0777)
 	if err != nil {
@@ -65,6 +68,7 @@ func (a *Atom) CreateResponse() {
 		log.Fatal("Failed to read file: " + tempFilePath)
 	} else {
 		str = string(bytes)
+		str = strings.ReplaceAll(str, MODName, a.ModName)
 	}
 	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0777)
 	if err != nil {
@@ -88,6 +92,7 @@ func (a *Atom) CreateRResponse() {
 		log.Fatal("Failed to read file: " + tempFilePath)
 	} else {
 		str = string(bytes)
+		str = strings.ReplaceAll(str, MODName, a.ModName)
 	}
 	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0777)
 	if err != nil {
