@@ -5,9 +5,7 @@ import (
 	"github.com/jtao539/autocode/template/common/response"
 	"github.com/jtao539/autocode/template/db"
 	"github.com/jtao539/autocode/template/model"
-	"github.com/jtao539/autocode/util"
 	"github.com/jtao539/sqlxp"
-	"time"
 )
 
 type DepartmentService struct {
@@ -17,19 +15,19 @@ type DepartmentService struct {
 func (d *DepartmentService) GetDepartmentList(departmentReq model.DepartmentReq) (error error, result interface{}) {
 	err, list, total := d.repos.GetDepartmentList(departmentReq)
 	if err != nil {
-		error = err
-		return
+		return err, nil
 	}
 	dtoList := make([]model.DepartmentDTO, len(list))
-	for i := 0; i < len(list); i++ {
-		sqlxp.N2B(list[i], &dtoList[i])
-	}
+	sqlxp.N2BList(list, dtoList)
 	result = response.ListData{List: dtoList, Total: total}
 	return
 }
 
-func (d *DepartmentService) GetDepartmentById(id int) (err error, result interface{}) {
+func (d *DepartmentService) GetDepartmentById(id int) (error error, result interface{}) {
 	err, m := d.repos.GetDepartmentById(id)
+	if err != nil {
+		return err, nil
+	}
 	var department model.DepartmentDTO
 	sqlxp.N2B(m, &department)
 	result = department
@@ -39,10 +37,6 @@ func (d *DepartmentService) GetDepartmentById(id int) (err error, result interfa
 func (d *DepartmentService) AddDepartment(departmentReq model.DepartmentReq) error {
 	var department model.Department
 	sqlxp.B2N(departmentReq.DepartmentDTO, &department)
-	if departmentReq.UserId != 0 {
-		department.CreateUserId = util.IntToNullInt32(departmentReq.UserId)
-	}
-	department.CreateTime = util.IntToNullInt32(int(time.Now().Unix()))
 	return d.repos.AddDepartment(department)
 }
 
