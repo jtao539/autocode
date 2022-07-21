@@ -15,6 +15,8 @@ var template string
 
 const MODName = "github.com/jtao539/autocode/template"
 
+const TPL = ".tpl"
+
 type Atom struct {
 	Name    string
 	TblName string
@@ -89,7 +91,7 @@ func (a *Atom) CreateModel() {
 
 func (a *Atom) createDB() {
 	global := fmt.Sprintf("%s/db/global.go", a.Path)
-	tempGlobal := fmt.Sprintf("%s/db/global.go", template)
+	tempGlobal := fmt.Sprintf("%s/db/global%s", template, TPL)
 	if flag, _ := PathExists(global); !flag {
 		var code string
 		if bytes, err := ioutil.ReadFile(tempGlobal); err != nil {
@@ -107,7 +109,7 @@ func (a *Atom) createDB() {
 	}
 	fileName := LowFirst(a.Name)
 	filePath := fmt.Sprintf("%s/db/%s.go", a.Path, fileName)
-	tempFilePath := fmt.Sprintf("%s/db/department.go", template)
+	tempFilePath := fmt.Sprintf("%s/db/department%s", template, TPL)
 	var str string
 	if bytes, err := ioutil.ReadFile(tempFilePath); err != nil {
 		log.Fatal("Failed to read file: " + tempFilePath)
@@ -130,7 +132,7 @@ func (a *Atom) createDB() {
 func (a *Atom) createService() {
 	fileName := LowFirst(a.Name)
 	filePath := fmt.Sprintf("%s/service/%s.go", a.Path, fileName)
-	tempFilePath := fmt.Sprintf("%s/service/department.go", template)
+	tempFilePath := fmt.Sprintf("%s/service/department%s", template, TPL)
 	var str string
 	if bytes, err := ioutil.ReadFile(tempFilePath); err != nil {
 		log.Fatal("Failed to read file: " + tempFilePath)
@@ -153,7 +155,7 @@ func (a *Atom) createService() {
 func (a *Atom) createApi() {
 	fileName := LowFirst(a.Name)
 	filePath := fmt.Sprintf("%s/api/%s.go", a.Path, fileName)
-	tempFilePath := fmt.Sprintf("%s/api/department.go", template)
+	tempFilePath := fmt.Sprintf("%s/api/department%s", template, TPL)
 	var str string
 	if bytes, err := ioutil.ReadFile(tempFilePath); err != nil {
 		log.Fatal("Failed to read file: " + tempFilePath)
@@ -175,7 +177,7 @@ func (a *Atom) createApi() {
 
 func (a *Atom) createRouter() {
 	register := fmt.Sprintf("%s/router/register.go", a.Path)
-	tempRegister := fmt.Sprintf("%s/router/register.go", template)
+	tempRegister := fmt.Sprintf("%s/router/register%s", template, TPL)
 	if flag, _ := PathExists(register); !flag {
 		var code string
 		if bytes, err := ioutil.ReadFile(tempRegister); err != nil {
@@ -193,7 +195,7 @@ func (a *Atom) createRouter() {
 	}
 	fileName := LowFirst(a.Name)
 	filePath := fmt.Sprintf("%s/router/%s.go", a.Path, fileName)
-	tempFilePath := fmt.Sprintf("%s/router/department.go", template)
+	tempFilePath := fmt.Sprintf("%s/router/department%s", template, TPL)
 	var str string
 	if bytes, err := ioutil.ReadFile(tempFilePath); err != nil {
 		log.Fatal("Failed to read file: " + tempFilePath)

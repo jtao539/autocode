@@ -13,7 +13,7 @@ func (a *Atom) CreateError() {
 	if flag, _ := PathExists(filePath); flag {
 		return
 	}
-	tempFilePath := fmt.Sprintf("%s/common/commonError/common.go", template)
+	tempFilePath := fmt.Sprintf("%s/common/commonError/common%s", template, TPL)
 	var str string
 	if bytes, err := ioutil.ReadFile(tempFilePath); err != nil {
 		log.Fatal("Failed to read file: " + tempFilePath)
@@ -36,7 +36,7 @@ func (a *Atom) CreateRequest() {
 	if flag, _ := PathExists(filePath); flag {
 		return
 	}
-	tempFilePath := fmt.Sprintf("%s/common/request/common.go", template)
+	tempFilePath := fmt.Sprintf("%s/common/request/common%s", template, TPL)
 	var str string
 	if bytes, err := ioutil.ReadFile(tempFilePath); err != nil {
 		log.Fatal("Failed to read file: " + tempFilePath)
@@ -59,7 +59,7 @@ func (a *Atom) CreateResponse() {
 	if flag, _ := PathExists(filePath); flag {
 		return
 	}
-	tempFilePath := fmt.Sprintf("%s/common/response/common.go", template)
+	tempFilePath := fmt.Sprintf("%s/common/response/common%s", template, TPL)
 	var str string
 	if bytes, err := ioutil.ReadFile(tempFilePath); err != nil {
 		log.Fatal("Failed to read file: " + tempFilePath)
@@ -82,7 +82,7 @@ func (a *Atom) CreateRResponse() {
 	if flag, _ := PathExists(filePath); flag {
 		return
 	}
-	tempFilePath := fmt.Sprintf("%s/common/response/response.go", template)
+	tempFilePath := fmt.Sprintf("%s/common/response/response%s", template, TPL)
 	var str string
 	if bytes, err := ioutil.ReadFile(tempFilePath); err != nil {
 		log.Fatal("Failed to read file: " + tempFilePath)
