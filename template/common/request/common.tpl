@@ -11,7 +11,6 @@ import (
 type PageInfo struct {
 	Page         int `json:"page" form:"page"`           // 页码
 	PageSize     int `json:"page_size" form:"page_size"` // 每页大小
-	CreateUserId int `json:"create_user_id" form:"create_user_id"`
 }
 
 func BindJson(obj interface{}, c *gin.Context) error {
