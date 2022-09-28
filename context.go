@@ -7,7 +7,7 @@ import (
 	"os/exec"
 )
 
-const Version = "v1.0.12"
+const Version = "v1.0.13"
 
 type ProBasic struct {
 	Name    string
@@ -33,6 +33,22 @@ func (p *ProBasic) Start() {
 	}
 	p.init()
 	p.a.GeneralAutoCode()
+	var cmd *exec.Cmd
+	cmd = exec.Command("go fmt")
+	cmd.Start()
+}
+
+func (p *ProBasic) StartFunc(functions ...func()) {
+	if err := database.GDB.DB.Ping(); err != nil {
+		panic("数据库连接失败!")
+	}
+	p.init()
+	p.a.InitTemplate()
+	p.a.Clear()
+	p.a.MkSomeDir()
+	for i := 0; i < len(functions); i++ {
+		functions[i]()
+	}
 	var cmd *exec.Cmd
 	cmd = exec.Command("go fmt")
 	cmd.Start()

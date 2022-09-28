@@ -89,7 +89,7 @@ func (a *Atom) CreateModel() {
 	fmt.Println(filePath, "Model 完成")
 }
 
-func (a *Atom) createDB() {
+func (a *Atom) CreateDB() {
 	global := fmt.Sprintf("%s/db/global.go", a.Path)
 	tempGlobal := fmt.Sprintf("%s/db/global%s", template, TPL)
 	if flag, _ := PathExists(global); !flag {
@@ -129,7 +129,7 @@ func (a *Atom) createDB() {
 	fmt.Println(filePath, "DB 完成")
 }
 
-func (a *Atom) createService() {
+func (a *Atom) CreateService() {
 	fileName := LowFirst(a.Name)
 	filePath := fmt.Sprintf("%s/service/%s.go", a.Path, fileName)
 	tempFilePath := fmt.Sprintf("%s/service/department%s", template, TPL)
@@ -152,7 +152,7 @@ func (a *Atom) createService() {
 	fmt.Println(filePath, "Service 完成")
 }
 
-func (a *Atom) createApi() {
+func (a *Atom) CreateApi() {
 	fileName := LowFirst(a.Name)
 	filePath := fmt.Sprintf("%s/api/%s.go", a.Path, fileName)
 	tempFilePath := fmt.Sprintf("%s/api/department%s", template, TPL)
@@ -175,7 +175,7 @@ func (a *Atom) createApi() {
 	fmt.Println(filePath, "api 完成")
 }
 
-func (a *Atom) createRouter() {
+func (a *Atom) CreateRouter() {
 	register := fmt.Sprintf("%s/router/register.go", a.Path)
 	tempRegister := fmt.Sprintf("%s/router/register%s", template, TPL)
 	if flag, _ := PathExists(register); !flag {
@@ -245,7 +245,7 @@ func (a *Atom) Clear() {
 }
 
 func (a *Atom) MkSomeDir() {
-	pathArray := []string{"model", "db", "service", "api", "router", "common"}
+	pathArray := []string{"model", "db", "service", "api", "router", "common", "json"}
 	for i := 0; i < len(pathArray); i++ {
 		MkDir(a.Path, pathArray[i])
 	}
@@ -281,7 +281,7 @@ func PathExists(path string) (bool, error) {
 }
 
 func (a *Atom) GeneralAutoCode() {
-	a.initTemplate()
+	a.InitTemplate()
 	a.Clear()
 	a.MkSomeDir()
 	a.CreateError()
@@ -289,10 +289,11 @@ func (a *Atom) GeneralAutoCode() {
 	a.CreateRResponse()
 	a.CreateRequest()
 	a.CreateModel()
-	a.createDB()
-	a.createService()
-	a.createApi()
-	a.createRouter()
+	a.CreateDB()
+	a.CreateService()
+	a.CreateApi()
+	a.CreateRouter()
+	a.CreateJson()
 }
 
 func (a *Atom) CreateApiFile() {
@@ -322,6 +323,47 @@ func (a *Atom) CreateApiFile() {
 	fmt.Println(a.Name, "API 完成")
 }
 
-func (a *Atom) initTemplate() {
+func (a *Atom) CreateJson() {
+	str := fmt.Sprintf("select column_name,column_comment,data_type from information_schema.columns where table_name='%s' and table_schema='%s' ORDER BY ORDINAL_POSITION", a.TblName, a.Name)
+	var list []Model
+	// err := db.GDB.DB.Select(&list, str)
+	query, err := database.GDB.DB.Query(str)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	for query.Next() {
+		m := Model{}
+		query.Scan(&m.columnName, &m.columnComment, &m.dataType)
+		list = append(list, m)
+	}
+	code := fmt.Sprintf("{\n")
+	for i := 0; i < len(list); i++ {
+		m := list[i]
+		switch m.dataType {
+		case "int", "tinyint":
+			code += "\t \"" + m.columnName + "\" : 1," + " // " + m.columnComment + "\n"
+		case "varchar", "timestamp":
+			code += "\t \"" + m.columnName + "\" : \"\"," + " // " + m.columnComment + "\n"
+		case "decimal":
+			code += "\t \"" + m.columnName + "\" : 1.1," + " // " + m.columnComment + "\n"
+		}
+	}
+	code = fmt.Sprintf("%s%s", code[:strings.LastIndex(code, ",")], code[strings.LastIndex(code, ",")+1:])
+	line := fmt.Sprintf("}")
+	code += line
+	fileName := LowFirst(a.Name)
+	filePath := fmt.Sprintf("%s/json/%s.json", a.Path, fileName)
+	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0777)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	f.Write([]byte(code))
+	defer f.Close()
+	fmt.Println(filePath, "Json 完成")
+}
+
+func (a *Atom) InitTemplate() {
 	template = build.Default.GOPATH + string(filepath.Separator) + "pkg" + string(filepath.Separator) + "mod" + string(filepath.Separator) + "github.com" + string(filepath.Separator) + "jtao539" + string(filepath.Separator) + "autocode@" + a.Version + string(filepath.Separator) + "template"
 }
