@@ -324,7 +324,7 @@ func (a *Atom) CreateApiFile() {
 }
 
 func (a *Atom) CreateJson() {
-	str := fmt.Sprintf("select column_name,column_comment,data_type from information_schema.columns where table_name='%s' and table_schema='%s' ORDER BY ORDINAL_POSITION", a.TblName, a.Name)
+	str := fmt.Sprintf("select column_name,column_comment,data_type from information_schema.columns where table_name='%s' and table_schema='%s' ORDER BY ORDINAL_POSITION", a.TblName, database.Name)
 	var list []Model
 	// err := db.GDB.DB.Select(&list, str)
 	query, err := database.GDB.DB.Query(str)
