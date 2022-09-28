@@ -9,6 +9,18 @@ import (
 
 const Version = "v1.0.13"
 
+const Api = "api"
+
+const Router = "router"
+
+const Model = "model"
+
+const Service = "service"
+
+const Db = "db"
+
+const Json = "json"
+
 type ProBasic struct {
 	Name    string
 	TblName string
@@ -38,7 +50,8 @@ func (p *ProBasic) Start() {
 	cmd.Start()
 }
 
-func (p *ProBasic) StartFunc(functions ...func()) {
+// StartFunc 自定义生成参数可为 Model、APi 等
+func (p *ProBasic) StartFunc(args ...string) {
 	if err := database.GDB.DB.Ping(); err != nil {
 		panic("数据库连接失败!")
 	}
@@ -46,8 +59,22 @@ func (p *ProBasic) StartFunc(functions ...func()) {
 	p.a.InitTemplate()
 	p.a.Clear()
 	p.a.MkSomeDir()
-	for i := 0; i < len(functions); i++ {
-		functions[i]()
+	p.a.CreateError()
+	p.a.CreateResponse()
+	p.a.CreateRResponse()
+	p.a.CreateRequest()
+	if containArray(Model, args) {
+		p.a.CreateModel()
+	} else if containArray(Db, args) {
+		p.a.CreateDB()
+	} else if containArray(Service, args) {
+		p.a.CreateService()
+	} else if containArray(Api, args) {
+		p.a.CreateApi()
+	} else if containArray(Router, args) {
+		p.a.CreateRouter()
+	} else if containArray(Json, args) {
+		p.a.CreateJson()
 	}
 	var cmd *exec.Cmd
 	cmd = exec.Command("go fmt")
@@ -60,4 +87,13 @@ func checkProBasic(p *ProBasic) bool {
 
 func InitDB(userName, password, host, port, name string) {
 	database.Init(userName, password, host, port, name)
+}
+
+func containArray(name string, args []string) bool {
+	for i := 0; i < len(args); i++ {
+		if name == args[i] {
+			return true
+		}
+	}
+	return false
 }

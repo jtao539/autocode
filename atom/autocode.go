@@ -349,7 +349,9 @@ func (a *Atom) CreateJson() {
 			code += "\t \"" + m.columnName + "\" : 1.1," + " // " + m.columnComment + "\n"
 		}
 	}
-	code = fmt.Sprintf("%s%s", code[:strings.LastIndex(code, ",")], code[strings.LastIndex(code, ",")+1:])
+	if strings.Contains(code, ",") {
+		code = fmt.Sprintf("%s%s", code[:strings.LastIndex(code, ",")], code[strings.LastIndex(code, ",")+1:])
+	}
 	line := fmt.Sprintf("}")
 	code += line
 	fileName := LowFirst(a.Name)
