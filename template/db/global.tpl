@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
+	"github.com/jtao539/autocode/template/config"
 	"github.com/jtao539/sqlxp"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -10,8 +11,9 @@ import (
 
 var Pro *sqlxp.SqlxP
 
-func Init(userName, password, host, port, name string) {
-	conStr := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", userName, password, host, port, name)
+func Init() {
+	d := config.Conf.DB
+	conStr := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", d.DBUser, d.DBPass, d.DBHost, d.DBPort, d.DBName)
 	connect("mysql", conStr)
 }
 

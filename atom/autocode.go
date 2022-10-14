@@ -245,7 +245,7 @@ func (a *Atom) Clear() {
 }
 
 func (a *Atom) MkSomeDir() {
-	pathArray := []string{"model", "db", "service", "api", "router", "common", "json"}
+	pathArray := []string{"model", "db", "service", "api", "router", "common", "json", "config"}
 	for i := 0; i < len(pathArray); i++ {
 		MkDir(a.Path, pathArray[i])
 	}
@@ -364,6 +364,52 @@ func (a *Atom) CreateJson() {
 	f.Write([]byte(code))
 	defer f.Close()
 	fmt.Println(filePath, "Json 完成")
+}
+
+func (a *Atom) CreateConfig() {
+	filePath := fmt.Sprintf("%s/config/%s.go", a.Path, "config")
+	if flag, _ := PathExists(filePath); flag {
+		return
+	}
+	tempFilePath := fmt.Sprintf("%s/config/config%s", template, TPL)
+	var str string
+	if bytes, err := ioutil.ReadFile(tempFilePath); err != nil {
+		log.Fatal("Failed to read file: " + tempFilePath)
+	} else {
+		str = string(bytes)
+		str = strings.ReplaceAll(str, MODName, a.ModName)
+	}
+	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0777)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	f.Write([]byte(str))
+	defer f.Close()
+	fmt.Println(filePath, "config 完成")
+}
+
+func (a *Atom) CreateConfigY() {
+	filePath := fmt.Sprintf("%s/config/%s.yml", a.Path, "config")
+	if flag, _ := PathExists(filePath); flag {
+		return
+	}
+	tempFilePath := fmt.Sprintf("%s/config/config%s", template, ".yml")
+	var str string
+	if bytes, err := ioutil.ReadFile(tempFilePath); err != nil {
+		log.Fatal("Failed to read file: " + tempFilePath)
+	} else {
+		str = string(bytes)
+		str = strings.ReplaceAll(str, MODName, a.ModName)
+	}
+	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0777)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	f.Write([]byte(str))
+	defer f.Close()
+	fmt.Println(filePath, "config.yml 完成")
 }
 
 func (a *Atom) InitTemplate() {

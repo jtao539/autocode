@@ -1,0 +1,11 @@
+db:
+  dbhost: 127.0.0.1
+  dbuser: root
+  dbpass: 123456
+  dbport: 3306
+  dbname: demo
+app:
+  uploadPath: D:\upload
+  port: 8080
+  logPath: ./log/
+  zapLog: true
