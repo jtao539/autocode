@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/jtao539/autocode/template/model"
-	"runtime"
 )
 
 type DepartmentDB struct {

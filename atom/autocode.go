@@ -98,6 +98,7 @@ func (a *Atom) CreateDB() {
 			log.Fatal("Failed to read file: " + tempGlobal)
 		} else {
 			code = string(bytes)
+			code = strings.ReplaceAll(code, MODName, a.ModName)
 		}
 		f, err := os.OpenFile(global, os.O_WRONLY|os.O_CREATE, 0777)
 		if err != nil {
