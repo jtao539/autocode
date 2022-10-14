@@ -7,7 +7,7 @@ import (
 	"os/exec"
 )
 
-const Version = "v1.0.17"
+const Version = "v1.0.18"
 
 const Api = "api"
 
@@ -63,6 +63,8 @@ func (p *ProBasic) StartFunc(args ...string) {
 	p.a.CreateResponse()
 	p.a.CreateRResponse()
 	p.a.CreateRequest()
+	p.a.CreateConfig()
+	p.a.CreateConfigY()
 	if containArray(Model, args) {
 		p.a.CreateModel()
 	} else if containArray(Db, args) {

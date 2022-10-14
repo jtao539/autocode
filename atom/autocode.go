@@ -289,6 +289,8 @@ func (a *Atom) GeneralAutoCode() {
 	a.CreateResponse()
 	a.CreateRResponse()
 	a.CreateRequest()
+	a.CreateConfig()
+	a.CreateConfigY()
 	a.CreateModel()
 	a.CreateDB()
 	a.CreateService()
