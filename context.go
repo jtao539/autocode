@@ -7,7 +7,7 @@ import (
 	"os/exec"
 )
 
-const Version = "v1.0.16"
+const Version = "v1.0.20"
 
 const Api = "api"
 
