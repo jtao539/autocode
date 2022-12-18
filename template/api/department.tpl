@@ -14,11 +14,11 @@ type DepartmentApi struct {
 }
 
 func (d *DepartmentApi) GetDepartmentList(c *gin.Context) {
-	var json model.DepartmentReq
-	if err := request.BindJson(&json, c); err != nil {
+	var req model.DepartmentReq
+	if err := request.BindJson(&req, c); err != nil {
 		return
 	}
-	err, list := d.serv.GetDepartmentList(json)
+	err, list := d.serv.GetDepartmentList(req)
 	response.Pack(err, c, list)
 }
 
@@ -30,37 +30,37 @@ func (d *DepartmentApi) GetDepartmentById(c *gin.Context) {
 }
 
 func (d *DepartmentApi) AddDepartment(c *gin.Context) {
-	var json model.DepartmentReq
-	if err := request.BindJson(&json, c); err != nil {
+	var req model.DepartmentReq
+	if err := request.BindJson(&req, c); err != nil {
 		return
 	}
-	err := d.serv.AddDepartment(json)
+	err := d.serv.AddDepartment(req)
 	response.Pack(err, c)
 }
 
 func (d *DepartmentApi) AddDepartmentForm(c *gin.Context) {
-	var form model.DepartmentReq
-	if err := request.BindForm(&form, c); err != nil {
+	var req model.DepartmentReq
+	if err := request.BindForm(&req, c); err != nil {
 		return
 	}
-	err := d.serv.AddDepartment(form)
+	err := d.serv.AddDepartment(req)
 	response.Pack(err, c)
 }
 
 func (d *DepartmentApi) DeleteDepartment(c *gin.Context) {
-	var json model.DepartmentReq
-	if err := request.BindJson(&json, c); err != nil {
+	var req model.DepartmentReq
+	if err := request.BindJson(&req, c); err != nil {
 		return
 	}
-	err := d.serv.DeleteDepartmentById(json)
+	err := d.serv.DeleteDepartmentById(req)
 	response.Pack(err, c)
 }
 
 func (d *DepartmentApi) UpdateDepartment(c *gin.Context) {
-	var json model.DepartmentReq
-	if err := request.BindJson(&json, c); err != nil {
+	var req model.DepartmentReq
+	if err := request.BindJson(&req, c); err != nil {
 		return
 	}
-	err := d.serv.UpdateDepartment(json)
+	err := d.serv.UpdateDepartment(req)
 	response.Pack(err, c)
 }

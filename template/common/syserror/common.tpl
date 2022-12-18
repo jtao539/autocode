@@ -1,4 +1,4 @@
-package commonError
+package syserror
 
 import (
 	"errors"

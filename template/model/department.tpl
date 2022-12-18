@@ -1,17 +1,16 @@
 package model
 
-import (
-	"github.com/jtao539/autocode/template/common/request"
-)
+import "github.com/jtao539/sqlxp"
 
 type Department struct {
 }
 
 type DepartmentDTO struct {
+	Id int `json:"id"`
 }
 
 type DepartmentReq struct {
-	request.PageInfo
+	sqlxp.PageInfo
 	DepartmentDTO
 }
 

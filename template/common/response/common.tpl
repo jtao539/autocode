@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/schema"
-	"github.com/jtao539/autocode/template/common/commonError"
+	"github.com/jtao539/autocode/template/common/syserror"
 	"go.uber.org/zap"
 )
 
@@ -24,7 +24,7 @@ func init() {
 // Pack data 中存储要返回的数据
 func Pack(err error, c *gin.Context, data ...interface{}) {
 	if err != nil {
-		if commonError.Contain(&err) {
+		if syserror.Contain(&err) {
 			FailWithMessage(err.Error(), c)
 			return
 		} else {

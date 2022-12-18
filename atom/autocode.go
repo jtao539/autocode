@@ -249,7 +249,7 @@ func (a *Atom) MkSomeDir() {
 	for i := 0; i < len(pathArray); i++ {
 		MkDir(a.Path, pathArray[i])
 	}
-	innerArray := []string{"commonError", "request", "response"}
+	innerArray := []string{"syserror", "request", "response", "util", "zlog"}
 	for i := 0; i < len(innerArray); i++ {
 		MkDir(a.Path+"/common", innerArray[i])
 	}
@@ -288,6 +288,7 @@ func (a *Atom) GeneralAutoCode() {
 	a.CreateResponse()
 	a.CreateRResponse()
 	a.CreateRequest()
+	a.CreateConfig()
 	a.CreateModel()
 	a.CreateDB()
 	a.CreateService()

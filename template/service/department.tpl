@@ -1,8 +1,8 @@
 package service
 
 import (
-	"github.com/jtao539/autocode/template/common/commonError"
 	"github.com/jtao539/autocode/template/common/response"
+	"github.com/jtao539/autocode/template/common/syserror"
 	"github.com/jtao539/autocode/template/db"
 	"github.com/jtao539/autocode/template/model"
 	"github.com/jtao539/sqlxp"
@@ -13,7 +13,7 @@ type DepartmentService struct {
 }
 
 func (d *DepartmentService) GetDepartmentList(departmentReq model.DepartmentReq) (error error, result interface{}) {
-	err, list, total := d.repos.GetDepartmentList(departmentReq)
+	err, list, total := d.repos.GetList(departmentReq)
 	if err != nil {
 		return err, nil
 	}
@@ -24,7 +24,7 @@ func (d *DepartmentService) GetDepartmentList(departmentReq model.DepartmentReq)
 }
 
 func (d *DepartmentService) GetDepartmentById(id int) (error error, result interface{}) {
-	err, m := d.repos.GetDepartmentById(id)
+	err, m := d.repos.GetOne(id)
 	if err != nil {
 		return err, nil
 	}
@@ -37,18 +37,18 @@ func (d *DepartmentService) GetDepartmentById(id int) (error error, result inter
 func (d *DepartmentService) AddDepartment(departmentReq model.DepartmentReq) error {
 	var department model.Department
 	sqlxp.B2N(departmentReq.DepartmentDTO, &department)
-	return d.repos.AddDepartment(department)
+	return d.repos.Add(department)
 }
 
 func (d *DepartmentService) DeleteDepartmentById(departmentReq model.DepartmentReq) error {
 	dto := departmentReq.DepartmentDTO
-	return d.repos.DeleteDepartmentById(dto.Id)
+	return d.repos.DeleteById(dto.Id)
 }
 
 func (d *DepartmentService) UpdateDepartment(departmentReq model.DepartmentReq) error {
 	dto := departmentReq.DepartmentDTO
 	if dto.Id == 0 {
-		return commonError.InValidUpdateError
+		return syserror.InValidUpdateError
 	}
-	return d.repos.UpdateDepartment(dto)
+	return d.repos.Update(dto)
 }

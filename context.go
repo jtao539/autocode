@@ -63,17 +63,23 @@ func (p *ProBasic) StartFunc(args ...string) {
 	p.a.CreateResponse()
 	p.a.CreateRResponse()
 	p.a.CreateRequest()
+	p.a.CreateConfig()
 	if containArray(Model, args) {
 		p.a.CreateModel()
-	} else if containArray(Db, args) {
+	}
+	if containArray(Db, args) {
 		p.a.CreateDB()
-	} else if containArray(Service, args) {
+	}
+	if containArray(Service, args) {
 		p.a.CreateService()
-	} else if containArray(Api, args) {
+	}
+	if containArray(Api, args) {
 		p.a.CreateApi()
-	} else if containArray(Router, args) {
+	}
+	if containArray(Router, args) {
 		p.a.CreateRouter()
-	} else if containArray(Json, args) {
+	}
+	if containArray(Json, args) {
 		p.a.CreateJson()
 	}
 	var cmd *exec.Cmd

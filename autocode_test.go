@@ -33,6 +33,9 @@ func findDir(dir, suffix string) {
 			findDir(path+f.Name(), suffix)
 		} else {
 			oldPath := path + f.Name()
+			if !(strings.Contains(oldPath, ".go") || strings.Contains(oldPath, ".tpl")) {
+				continue
+			}
 			newPath := path + f.Name()[:strings.LastIndex(f.Name(), ".")] + suffix
 			err := os.Rename(oldPath, newPath)
 			if err != nil {
