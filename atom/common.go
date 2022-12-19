@@ -128,30 +128,6 @@ func (a *Atom) CreateUtil() {
 	fmt.Println(filePath, "util 完成")
 }
 
-func (a *Atom) CreateSysError() {
-	commonPath := a.Path + "/" + "common"
-	filePath := fmt.Sprintf("%s/syserror/%s.go", commonPath, "common")
-	if flag, _ := PathExists(filePath); flag {
-		return
-	}
-	tempFilePath := fmt.Sprintf("%s/common/util/common%s", template, TPL)
-	var str string
-	if bytes, err := ioutil.ReadFile(tempFilePath); err != nil {
-		log.Fatal("Failed to read file: " + tempFilePath)
-	} else {
-		str = string(bytes)
-		str = strings.ReplaceAll(str, MODName, a.ModName)
-	}
-	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0777)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	f.Write([]byte(str))
-	defer f.Close()
-	fmt.Println(filePath, "util 完成")
-}
-
 func (a *Atom) CreateZLog() {
 	commonPath := a.Path + "/" + "common"
 	filePath := fmt.Sprintf("%s/zlog/%s.go", commonPath, "common")

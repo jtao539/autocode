@@ -45,7 +45,7 @@ func (a *Atom) CreateModel() {
 		query.Scan(&m.columnName, &m.columnComment, &m.dataType)
 		list = append(list, m)
 	}
-	code := fmt.Sprintf("package model\n\nimport (\n\t\"%s/common/request\"\n\t\"database/sql\"\n\t\"github.com/jtao539/sqlxp\"\n)\n\ntype %s struct {\n", a.ModName, a.Name)
+	code := fmt.Sprintf("package model\n\nimport (\n\t\"database/sql\"\n\t\"github.com/jtao539/sqlxp\"\n)\n\ntype %s struct {\n", a.Name)
 	for i := 0; i < len(list); i++ {
 		m := list[i]
 		tag := fmt.Sprintf("`db:\"%s\" json:\"%s\"`", m.columnName, m.columnName)
@@ -289,6 +289,8 @@ func (a *Atom) GeneralAutoCode() {
 	a.CreateResponse()
 	a.CreateRResponse()
 	a.CreateRequest()
+	a.CreateUtil()
+	a.CreateZLog()
 	a.CreateConfig()
 	a.CreateModel()
 	a.CreateDB()

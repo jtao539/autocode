@@ -13,6 +13,7 @@ func (a *Atom) CreateConfig() {
 	m["config.yml"] = "config.yml"
 	m["cors.go"] = "cors.tpl"
 	m["rbac_models.conf"] = "rbac_models.conf"
+	m["config.go"] = "config.tpl"
 	for k, v := range m {
 		a.createConfig(k, v)
 	}
