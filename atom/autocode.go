@@ -45,12 +45,12 @@ func (a *Atom) CreateModel() {
 		query.Scan(&m.columnName, &m.columnComment, &m.dataType)
 		list = append(list, m)
 	}
-	code := fmt.Sprintf("package model\n\nimport (\n\t\"%s/common/request\"\n\t\"database/sql\"\n)\n\ntype %s struct {\n", a.ModName, a.Name)
+	code := fmt.Sprintf("package model\n\nimport (\n\t\"%s/common/request\"\n\t\"database/sql\"\n\t\"github.com/jtao539/sqlxp\"\n)\n\ntype %s struct {\n", a.ModName, a.Name)
 	for i := 0; i < len(list); i++ {
 		m := list[i]
 		tag := fmt.Sprintf("`db:\"%s\" json:\"%s\"`", m.columnName, m.columnName)
 		switch m.dataType {
-		case "int", "tinyint":
+		case "int", "tinyint", "bigint":
 			code += "\t" + Case2Camel(m.columnName) + " sql.NullInt32 " + tag + " // " + m.columnComment + "\n"
 		case "varchar":
 			code += "\t" + Case2Camel(m.columnName) + " sql.NullString " + tag + " // " + m.columnComment + "\n"
@@ -67,7 +67,7 @@ func (a *Atom) CreateModel() {
 			continue
 		}
 		switch m.dataType {
-		case "int", "tinyint":
+		case "int", "tinyint", "bigint":
 			code += "\t" + Case2Camel(m.columnName) + " int " + tag + " // " + m.columnComment + "\n"
 		case "varchar":
 			code += "\t" + Case2Camel(m.columnName) + " string " + tag + " // " + m.columnComment + "\n"
@@ -75,7 +75,7 @@ func (a *Atom) CreateModel() {
 			code += "\t" + Case2Camel(m.columnName) + " float64 " + tag + " // " + m.columnComment + "\n"
 		}
 	}
-	lastLine := fmt.Sprintf("}\n\ntype %sReq struct {\n\trequest.PageInfo\n\t%sDTO\n}\n\nfunc (%s) TableName() string {\n\treturn \"%s\"\n}", a.Name, a.Name, a.Name, a.TblName)
+	lastLine := fmt.Sprintf("}\n\ntype %sReq struct {\n\tsqlxp.PageInfo\n\t%sDTO\n}\n\nfunc (%s) TableName() string {\n\treturn \"%s\"\n}", a.Name, a.Name, a.Name, a.TblName)
 	code += lastLine
 	fileName := LowFirst(a.Name)
 	filePath := fmt.Sprintf("%s/model/%s.go", a.Path, fileName)
@@ -98,6 +98,7 @@ func (a *Atom) CreateDB() {
 			log.Fatal("Failed to read file: " + tempGlobal)
 		} else {
 			code = string(bytes)
+			code = strings.ReplaceAll(code, MODName, a.ModName)
 		}
 		f, err := os.OpenFile(global, os.O_WRONLY|os.O_CREATE, 0777)
 		if err != nil {
@@ -245,7 +246,7 @@ func (a *Atom) Clear() {
 }
 
 func (a *Atom) MkSomeDir() {
-	pathArray := []string{"model", "db", "service", "api", "router", "common", "json"}
+	pathArray := []string{"model", "db", "service", "api", "router", "common", "json", "config"}
 	for i := 0; i < len(pathArray); i++ {
 		MkDir(a.Path, pathArray[i])
 	}
