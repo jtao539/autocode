@@ -77,7 +77,7 @@ func (a *Atom) CreateModel() {
 	}
 	lastLine := fmt.Sprintf("}\n\ntype %sReq struct {\n\tsqlxp.PageInfo\n\t%sDTO\n}\n\nfunc (%s) TableName() string {\n\treturn \"%s\"\n}", a.Name, a.Name, a.Name, a.TblName)
 	code += lastLine
-	fileName := LowFirst(a.Name)
+	fileName := Camel2Case(a.Name)
 	filePath := fmt.Sprintf("%s/model/%s.go", a.Path, fileName)
 	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_CREATE, 0777)
 	if err != nil {
@@ -108,7 +108,7 @@ func (a *Atom) CreateDB() {
 		f.Write([]byte(code))
 		defer f.Close()
 	}
-	fileName := LowFirst(a.Name)
+	fileName := Camel2Case(a.Name)
 	filePath := fmt.Sprintf("%s/db/%s.go", a.Path, fileName)
 	tempFilePath := fmt.Sprintf("%s/db/department%s", template, TPL)
 	var str string
@@ -131,7 +131,7 @@ func (a *Atom) CreateDB() {
 }
 
 func (a *Atom) CreateService() {
-	fileName := LowFirst(a.Name)
+	fileName := Camel2Case(a.Name)
 	filePath := fmt.Sprintf("%s/service/%s.go", a.Path, fileName)
 	tempFilePath := fmt.Sprintf("%s/service/department%s", template, TPL)
 	var str string
@@ -154,7 +154,7 @@ func (a *Atom) CreateService() {
 }
 
 func (a *Atom) CreateApi() {
-	fileName := LowFirst(a.Name)
+	fileName := Camel2Case(a.Name)
 	filePath := fmt.Sprintf("%s/api/%s.go", a.Path, fileName)
 	tempFilePath := fmt.Sprintf("%s/api/department%s", template, TPL)
 	var str string
@@ -194,7 +194,7 @@ func (a *Atom) CreateRouter() {
 		f.Write([]byte(code))
 		defer f.Close()
 	}
-	fileName := LowFirst(a.Name)
+	fileName := Camel2Case(a.Name)
 	filePath := fmt.Sprintf("%s/router/%s.go", a.Path, fileName)
 	tempFilePath := fmt.Sprintf("%s/router/department%s", template, TPL)
 	var str string
@@ -217,7 +217,7 @@ func (a *Atom) CreateRouter() {
 }
 
 func (a *Atom) Clear() {
-	fileName := LowFirst(a.Name)
+	fileName := Camel2Case(a.Name)
 	pathArray := []string{"model", "db", "service", "api", "router"}
 	for i := 0; i < len(pathArray); i++ {
 		filePath := a.Path + "/" + pathArray[i] + "/" + fileName + ".go"
