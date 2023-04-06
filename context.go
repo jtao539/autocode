@@ -7,7 +7,7 @@ import (
 	"os/exec"
 )
 
-const Version = "v1.0.23"
+const Version = "v1.0.24"
 
 const Api = "api"
 
@@ -57,7 +57,6 @@ func (p *ProBasic) StartFunc(args ...string) {
 	}
 	p.init()
 	p.a.InitTemplate()
-	p.a.Clear()
 	p.a.MkSomeDir()
 	if containArray(Model, args) {
 		p.a.CreateModel()
